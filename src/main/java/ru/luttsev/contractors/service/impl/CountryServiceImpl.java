@@ -31,9 +31,6 @@ public class CountryServiceImpl implements CountryService {
     @Override
     @Transactional
     public Country save(Country country) {
-        if (country.getIsActive() == null) {
-            country.setIsActive(true);
-        }
         return countryRepository.save(country);
     }
 
