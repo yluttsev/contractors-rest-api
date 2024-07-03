@@ -1,0 +1,45 @@
+package ru.luttsev.contractors.service.impl;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.luttsev.contractors.entity.Industry;
+import ru.luttsev.contractors.exception.IndustryNotFoundException;
+import ru.luttsev.contractors.repository.IndustryRepository;
+import ru.luttsev.contractors.service.IndustryService;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class IndustryServiceImpl implements IndustryService {
+
+    private final IndustryRepository industryRepository;
+
+    @Override
+    public List<Industry> getAll() {
+        return industryRepository.findAll();
+    }
+
+    @Override
+    public Industry getById(Integer id) {
+        return industryRepository.findById(id).orElseThrow(
+                () -> new IndustryNotFoundException(id)
+        );
+    }
+
+    @Override
+    @Transactional
+    public Industry save(Industry industry) {
+        return industryRepository.save(industry);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        if (industryRepository.existsById(id)) {
+            industryRepository.deleteById(id);
+        }
+        throw new IndustryNotFoundException(id);
+    }
+
+}
