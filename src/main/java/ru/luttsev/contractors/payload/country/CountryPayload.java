@@ -26,12 +26,4 @@ public class CountryPayload {
         this.isActive = country.getIsActive();
     }
 
-    public Country toEntity() {
-        return Country.builder()
-                .id(this.id)
-                .name(this.name)
-                .isActive(this.isActive)
-                .build();
-    }
-
 }

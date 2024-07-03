@@ -26,12 +26,4 @@ public class IndustryPayload {
         this.isActive = industry.getIsActive();
     }
 
-    public Industry toEntity() {
-        return Industry.builder()
-                .id(this.id)
-                .name(this.name)
-                .isActive(this.isActive)
-                .build();
-    }
-
 }
