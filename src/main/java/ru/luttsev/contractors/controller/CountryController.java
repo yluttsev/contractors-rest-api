@@ -16,7 +16,7 @@ import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.exception.CountryNotFoundException;
 import ru.luttsev.contractors.payload.country.CountryResponsePayload;
 import ru.luttsev.contractors.payload.country.SaveOrUpdateCountryPayload;
-import ru.luttsev.contractors.service.EntityService;
+import ru.luttsev.contractors.service.country.CountryService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/country")
 public class CountryController {
 
-    private final EntityService<Country, String> countryService;
+    private final CountryService countryService;
 
     @GetMapping("/all")
     public List<CountryResponsePayload> getAllCountries() {

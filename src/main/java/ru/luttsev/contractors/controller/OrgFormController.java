@@ -16,7 +16,7 @@ import ru.luttsev.contractors.entity.OrgForm;
 import ru.luttsev.contractors.exception.OrgFormNotFoundException;
 import ru.luttsev.contractors.payload.orgform.OrgFormResponsePayload;
 import ru.luttsev.contractors.payload.orgform.SaveOrUpdateOrgFormPayload;
-import ru.luttsev.contractors.service.EntityService;
+import ru.luttsev.contractors.service.orgform.OrgFormService;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrgFormController {
 
-    private final EntityService<OrgForm, Integer> orgFormService;
+    private final OrgFormService orgFormService;
 
     @GetMapping("/all")
     public List<OrgFormResponsePayload> getAll() {
