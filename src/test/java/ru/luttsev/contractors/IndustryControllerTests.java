@@ -13,7 +13,7 @@ import ru.luttsev.contractors.controller.IndustryController;
 import ru.luttsev.contractors.entity.Industry;
 import ru.luttsev.contractors.exception.IndustryNotFoundException;
 import ru.luttsev.contractors.payload.industry.IndustryResponsePayload;
-import ru.luttsev.contractors.service.IndustryService;
+import ru.luttsev.contractors.service.EntityService;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class IndustryControllerTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private IndustryService industryService;
+    private EntityService<Industry, Integer> industryService;
 
     @Autowired
     private ObjectMapper objectMapper;
