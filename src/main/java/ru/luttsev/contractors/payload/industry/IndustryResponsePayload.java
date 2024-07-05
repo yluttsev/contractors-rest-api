@@ -1,6 +1,5 @@
 package ru.luttsev.contractors.payload.industry;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,13 +16,17 @@ public class IndustryResponsePayload {
 
     private String name;
 
-    @JsonProperty("is_active")
-    private Boolean isActive;
-
     public IndustryResponsePayload(Industry industry) {
         this.id = industry.getId();
         this.name = industry.getName();
-        this.isActive = industry.getIsActive();
+    }
+
+    public Industry toEntity() {
+        return Industry.builder()
+                .id(this.id)
+                .name(this.name)
+                .isActive(true)
+                .build();
     }
 
 }
