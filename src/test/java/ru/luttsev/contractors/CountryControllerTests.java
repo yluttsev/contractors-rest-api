@@ -13,7 +13,8 @@ import ru.luttsev.contractors.controller.CountryController;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.exception.CountryNotFoundException;
 import ru.luttsev.contractors.payload.country.CountryResponsePayload;
-import ru.luttsev.contractors.service.EntityService;
+import ru.luttsev.contractors.service.CrudService;
+import ru.luttsev.contractors.service.country.CountryService;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class CountryControllerTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private EntityService<Country, String> countryService;
+    private CountryService countryService;
 
     @Autowired
     private ObjectMapper objectMapper;
