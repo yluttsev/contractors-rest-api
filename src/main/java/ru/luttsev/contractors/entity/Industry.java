@@ -21,7 +21,7 @@ public class Industry {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "industry_id_seq")
     private Integer id;
 
     @Column(name = "name")
