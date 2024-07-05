@@ -2,9 +2,12 @@ package ru.luttsev.contractors.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -25,6 +28,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Builder
+@NamedEntityGraph(name = "contractor-entity-graph", attributeNodes = {
+        @NamedAttributeNode("country"),
+        @NamedAttributeNode("industry"),
+        @NamedAttributeNode("orgForm")
+})
 public class Contractor {
 
     @Id
@@ -46,15 +54,15 @@ public class Contractor {
     @Column(name = "ogrn")
     private String ogrn;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country", referencedColumnName = "id")
     private Country country;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "industry", referencedColumnName = "id")
     private Industry industry;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "org_form", referencedColumnName = "id")
     private OrgForm orgForm;
 
@@ -76,6 +84,7 @@ public class Contractor {
     @LastModifiedBy
     private String modifyUserId;
 
+    @Column(name = "is_active")
     private Boolean isActive;
 
 }
