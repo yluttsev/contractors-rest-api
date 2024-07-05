@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.luttsev.contractors.controller.CountryController;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.exception.CountryNotFoundException;
-import ru.luttsev.contractors.payload.country.CountryPayload;
+import ru.luttsev.contractors.payload.country.CountryResponsePayload;
 import ru.luttsev.contractors.service.CountryService;
 
 import java.util.List;
@@ -99,15 +99,15 @@ public class CountryControllerTests {
     @DisplayName("Создание новой страны")
     public void testCreateNewCountry() throws Exception {
         Country russia = createRussia();
-        when(countryService.save(russia)).thenReturn(russia);
+        when(countryService.saveOrUpdate(russia)).thenReturn(russia);
 
         mockMvc.perform(put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CountryPayload(russia))))
+                        .content(objectMapper.writeValueAsString(new CountryResponsePayload(russia))))
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        content().json(objectMapper.writeValueAsString(new CountryPayload(russia)), true)
+                        content().json(objectMapper.writeValueAsString(new CountryResponsePayload(russia)), true)
                 );
     }
 

@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.luttsev.contractors.controller.IndustryController;
 import ru.luttsev.contractors.entity.Industry;
 import ru.luttsev.contractors.exception.IndustryNotFoundException;
-import ru.luttsev.contractors.payload.industry.IndustryPayload;
+import ru.luttsev.contractors.payload.industry.IndustryResponsePayload;
 import ru.luttsev.contractors.service.IndustryService;
 
 import java.util.List;
@@ -104,15 +104,15 @@ public class IndustryControllerTests {
     public void testCreateNewIndustry() throws Exception {
         Industry it = createItIndustry();
 
-        when(industryService.save(it)).thenReturn(it);
+        when(industryService.saveOrUpdate(it)).thenReturn(it);
 
         mockMvc.perform(put("/industry/save")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new IndustryPayload(it))))
+                        .content(objectMapper.writeValueAsString(new IndustryResponsePayload(it))))
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        content().json(objectMapper.writeValueAsString(new IndustryPayload(it)), true)
+                        content().json(objectMapper.writeValueAsString(new IndustryResponsePayload(it)), true)
                 );
     }
 
