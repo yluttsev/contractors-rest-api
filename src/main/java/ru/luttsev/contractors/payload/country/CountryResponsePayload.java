@@ -11,7 +11,7 @@ import ru.luttsev.contractors.entity.Country;
 @NoArgsConstructor
 @Data
 @Builder
-public class CountryPayload {
+public class CountryResponsePayload {
 
     private String id;
 
@@ -20,7 +20,7 @@ public class CountryPayload {
     @JsonProperty(value = "is_active")
     private Boolean isActive;
 
-    public CountryPayload(Country country) {
+    public CountryResponsePayload(Country country) {
         this.id = country.getId();
         this.name = country.getName();
         this.isActive = country.getIsActive();

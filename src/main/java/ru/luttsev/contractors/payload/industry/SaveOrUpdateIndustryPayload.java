@@ -8,7 +8,7 @@ import ru.luttsev.contractors.entity.Industry;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SaveIndustryPayload {
+public class SaveOrUpdateIndustryPayload {
 
     private Integer id;
 

@@ -8,7 +8,7 @@ import ru.luttsev.contractors.entity.Country;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SaveCountryPayload {
+public class SaveOrUpdateCountryPayload {
 
     private String id;
 

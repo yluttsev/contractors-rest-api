@@ -10,7 +10,7 @@ public interface IndustryService {
 
     Industry getById(Integer id);
 
-    Industry save(Industry industry);
+    Industry saveOrUpdate(Industry industry);
 
     void deleteById(Integer id);
 

@@ -10,7 +10,7 @@ public interface CountryService {
 
     Country getById(String id);
 
-    Country save(Country country);
+    Country saveOrUpdate(Country country);
 
     void deleteById(String id);
 

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.exception.CountryNotFoundException;
-import ru.luttsev.contractors.payload.country.CountryPayload;
-import ru.luttsev.contractors.payload.country.SaveCountryPayload;
+import ru.luttsev.contractors.payload.country.CountryResponsePayload;
+import ru.luttsev.contractors.payload.country.SaveOrUpdateCountryPayload;
 import ru.luttsev.contractors.service.CountryService;
 
 import java.util.List;
@@ -29,23 +29,23 @@ public class CountryController {
     private final CountryService countryService;
 
     @GetMapping("/all")
-    public List<CountryPayload> getAllCountries() {
+    public List<CountryResponsePayload> getAllCountries() {
         return countryService.getAll().stream()
-                .map(CountryPayload::new)
+                .map(CountryResponsePayload::new)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public CountryPayload getCountryById(@PathVariable("id") String countryId) {
+    public CountryResponsePayload getCountryById(@PathVariable("id") String countryId) {
         Country country = countryService.getById(countryId);
-        return new CountryPayload(country);
+        return new CountryResponsePayload(country);
     }
 
     @PutMapping("/save")
-    public CountryPayload saveCountry(@RequestBody SaveCountryPayload saveCountryPayload) {
-        Country country = saveCountryPayload.toEntity();
-        Country savedCountry = countryService.save(country);
-        return new CountryPayload(savedCountry);
+    public CountryResponsePayload saveOrUpdateCountry(@RequestBody SaveOrUpdateCountryPayload saveOrUpdateCountryPayload) {
+        Country country = saveOrUpdateCountryPayload.toEntity();
+        Country savedCountry = countryService.saveOrUpdate(country);
+        return new CountryResponsePayload(savedCountry);
     }
 
     @DeleteMapping("/delete/{id}")

@@ -30,7 +30,13 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional
-    public Country save(Country country) {
+    public Country saveOrUpdate(Country country) {
+        if (country.getId() != null && countryRepository.existsById(country.getId())) {
+            Country countryEntity = getById(country.getId());
+            countryEntity.setId(country.getId());
+            countryEntity.setName(country.getName());
+            return countryRepository.save(countryEntity);
+        }
         return countryRepository.save(country);
     }
 

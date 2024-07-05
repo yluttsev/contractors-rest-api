@@ -11,7 +11,7 @@ import ru.luttsev.contractors.entity.Industry;
 @NoArgsConstructor
 @Data
 @Builder
-public class IndustryPayload {
+public class IndustryResponsePayload {
 
     private Integer id;
 
@@ -20,7 +20,7 @@ public class IndustryPayload {
     @JsonProperty("is_active")
     private Boolean isActive;
 
-    public IndustryPayload(Industry industry) {
+    public IndustryResponsePayload(Industry industry) {
         this.id = industry.getId();
         this.name = industry.getName();
         this.isActive = industry.getIsActive();

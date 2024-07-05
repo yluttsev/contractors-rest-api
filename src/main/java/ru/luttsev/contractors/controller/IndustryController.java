@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.luttsev.contractors.entity.Industry;
 import ru.luttsev.contractors.exception.IndustryNotFoundException;
-import ru.luttsev.contractors.payload.industry.IndustryPayload;
-import ru.luttsev.contractors.payload.industry.SaveIndustryPayload;
+import ru.luttsev.contractors.payload.industry.IndustryResponsePayload;
+import ru.luttsev.contractors.payload.industry.SaveOrUpdateIndustryPayload;
 import ru.luttsev.contractors.service.IndustryService;
 
 import java.util.List;
@@ -28,23 +28,23 @@ public class IndustryController {
     private final IndustryService industryService;
 
     @GetMapping("/all")
-    public List<IndustryPayload> getAllIndustries() {
+    public List<IndustryResponsePayload> getAllIndustries() {
         return industryService.getAll().stream()
-                .map(IndustryPayload::new)
+                .map(IndustryResponsePayload::new)
                 .toList();
     }
 
     @GetMapping("/{id}")
-    public IndustryPayload getIndustryById(@PathVariable("id") Integer id) {
+    public IndustryResponsePayload getIndustryById(@PathVariable("id") Integer id) {
         Industry industry = industryService.getById(id);
-        return new IndustryPayload(industry);
+        return new IndustryResponsePayload(industry);
     }
 
     @PutMapping("/save")
-    public IndustryPayload saveIndustry(@RequestBody SaveIndustryPayload saveIndustryPayload) {
-        Industry industry = saveIndustryPayload.toEntity();
-        Industry savedIndustry = industryService.save(industry);
-        return new IndustryPayload(savedIndustry);
+    public IndustryResponsePayload saveIndustry(@RequestBody SaveOrUpdateIndustryPayload saveOrUpdateIndustryPayload) {
+        Industry industry = saveOrUpdateIndustryPayload.toEntity();
+        Industry savedIndustry = industryService.saveOrUpdate(industry);
+        return new IndustryResponsePayload(savedIndustry);
     }
 
     @DeleteMapping("/delete/{id}")
