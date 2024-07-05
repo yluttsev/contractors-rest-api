@@ -1,4 +1,4 @@
-package ru.luttsev.contractors.service.impl;
+package ru.luttsev.contractors.service.industry.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.Industry;
 import ru.luttsev.contractors.exception.IndustryNotFoundException;
 import ru.luttsev.contractors.repository.IndustryRepository;
-import ru.luttsev.contractors.service.EntityService;
+import ru.luttsev.contractors.service.industry.IndustryService;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class IndustryServiceImpl implements EntityService<Industry, Integer> {
+public class IndustryServiceImpl implements IndustryService {
 
     private final IndustryRepository industryRepository;
 

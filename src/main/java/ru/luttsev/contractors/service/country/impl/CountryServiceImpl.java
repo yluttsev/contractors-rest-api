@@ -1,4 +1,4 @@
-package ru.luttsev.contractors.service.impl;
+package ru.luttsev.contractors.service.country.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.exception.CountryNotFoundException;
 import ru.luttsev.contractors.repository.CountryRepository;
-import ru.luttsev.contractors.service.EntityService;
+import ru.luttsev.contractors.service.country.CountryService;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CountryServiceImpl implements EntityService<Country, String> {
+public class CountryServiceImpl implements CountryService {
 
     private final CountryRepository countryRepository;
 

@@ -1,4 +1,4 @@
-package ru.luttsev.contractors.service.impl;
+package ru.luttsev.contractors.service.orgform.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.OrgForm;
 import ru.luttsev.contractors.exception.OrgFormNotFoundException;
 import ru.luttsev.contractors.repository.OrgFormRepository;
-import ru.luttsev.contractors.service.EntityService;
+import ru.luttsev.contractors.service.orgform.OrgFormService;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class OrgFormServiceImpl implements EntityService<OrgForm, Integer> {
+public class OrgFormServiceImpl implements OrgFormService {
 
     private final OrgFormRepository orgFormRepository;
 

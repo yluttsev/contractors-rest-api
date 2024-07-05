@@ -2,7 +2,7 @@ package ru.luttsev.contractors.service;
 
 import java.util.List;
 
-public interface EntityService<T, K> {
+public interface CrudService<T, K> {
 
     List<T> getAll();
 
