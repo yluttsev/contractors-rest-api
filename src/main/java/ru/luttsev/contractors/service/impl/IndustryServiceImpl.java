@@ -41,6 +41,7 @@ public class IndustryServiceImpl implements EntityService<Industry, Integer> {
     }
 
     @Override
+    @Transactional
     public void deleteById(Integer id) {
         if (industryRepository.existsById(id)) {
             industryRepository.deleteById(id);
