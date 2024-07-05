@@ -16,7 +16,7 @@ import ru.luttsev.contractors.entity.Industry;
 import ru.luttsev.contractors.exception.IndustryNotFoundException;
 import ru.luttsev.contractors.payload.industry.IndustryResponsePayload;
 import ru.luttsev.contractors.payload.industry.SaveOrUpdateIndustryPayload;
-import ru.luttsev.contractors.service.IndustryService;
+import ru.luttsev.contractors.service.EntityService;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
 @RequestMapping("/industry")
 public class IndustryController {
 
-    private final IndustryService industryService;
+    private final EntityService<Industry, Integer> industryService;
 
     @GetMapping("/all")
     public List<IndustryResponsePayload> getAllIndustries() {
