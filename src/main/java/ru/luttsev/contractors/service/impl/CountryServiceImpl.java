@@ -45,6 +45,7 @@ public class CountryServiceImpl implements EntityService<Country, String> {
     public void deleteById(String id) {
         if (countryRepository.existsById(id)) {
             countryRepository.deleteById(id);
+            return;
         }
         throw new CountryNotFoundException(id);
     }

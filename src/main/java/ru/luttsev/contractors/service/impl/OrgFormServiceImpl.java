@@ -45,6 +45,7 @@ public class OrgFormServiceImpl implements EntityService<OrgForm, Integer> {
     public void deleteById(Integer id) {
         if (orgFormRepository.existsById(id)) {
             orgFormRepository.deleteById(id);
+            return;
         }
         throw new OrgFormNotFoundException(id);
     }

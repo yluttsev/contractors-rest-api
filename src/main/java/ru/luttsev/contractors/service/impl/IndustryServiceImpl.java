@@ -45,6 +45,7 @@ public class IndustryServiceImpl implements EntityService<Industry, Integer> {
     public void deleteById(Integer id) {
         if (industryRepository.existsById(id)) {
             industryRepository.deleteById(id);
+            return;
         }
         throw new IndustryNotFoundException(id);
     }
