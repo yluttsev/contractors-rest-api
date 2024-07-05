@@ -8,15 +8,18 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.exception.ContractorNotFoundException;
+import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
 import ru.luttsev.contractors.payload.contractor.ContractorResponsePayload;
+import ru.luttsev.contractors.payload.contractor.ContractorsPagePayload;
 import ru.luttsev.contractors.payload.contractor.SaveOrUpdateContractorPayload;
-import ru.luttsev.contractors.service.EntityService;
+import ru.luttsev.contractors.service.contractor.ContractorService;
 
 import java.util.List;
 
@@ -25,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContractorController {
 
-    private final EntityService<Contractor, String> contractorService;
+    private final ContractorService contractorService;
 
     @GetMapping("/all")
     public List<ContractorResponsePayload> getAllContractors() {
@@ -48,6 +51,14 @@ public class ContractorController {
     public ResponseEntity<?> deleteContractorById(@PathVariable("id") String contractorId) {
         contractorService.deleteById(contractorId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/search")
+    public ContractorsPagePayload searchContractors(
+            @RequestBody ContractorFiltersPayload contractorFilters,
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "10", required = false) Integer contentSize) {
+        return contractorService.getByFilters(contractorFilters, page, contentSize);
     }
 
     @ExceptionHandler(ContractorNotFoundException.class)

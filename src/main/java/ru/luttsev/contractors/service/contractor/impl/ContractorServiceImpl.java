@@ -1,18 +1,25 @@
-package ru.luttsev.contractors.service.impl;
+package ru.luttsev.contractors.service.contractor.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.exception.ContractorNotFoundException;
+import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
+import ru.luttsev.contractors.payload.contractor.ContractorResponsePayload;
+import ru.luttsev.contractors.payload.contractor.ContractorSpecification;
+import ru.luttsev.contractors.payload.contractor.ContractorsPagePayload;
 import ru.luttsev.contractors.repository.ContractorRepository;
-import ru.luttsev.contractors.service.EntityService;
+import ru.luttsev.contractors.service.contractor.ContractorService;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ContractorService implements EntityService<Contractor, String> {
+public class ContractorServiceImpl implements ContractorService {
 
     private final ContractorRepository contractorRepository;
 
@@ -56,6 +63,15 @@ public class ContractorService implements EntityService<Contractor, String> {
             return;
         }
         throw new ContractorNotFoundException(id);
+    }
+
+    @Override
+    public ContractorsPagePayload getByFilters(ContractorFiltersPayload filters, int page, int contentSize) {
+        Specification<Contractor> specification = ContractorSpecification.getContractorByFilters(filters);
+        Page<Contractor> contractorsPage = contractorRepository.findAll(specification, PageRequest.of(page, contentSize));
+        return new ContractorsPagePayload(contractorsPage.getNumber(),
+                contractorsPage.getNumberOfElements(),
+                contractorsPage.get().map(ContractorResponsePayload::new).toList());
     }
 
 }
