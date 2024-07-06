@@ -56,9 +56,16 @@ public class ContractorController {
     @PostMapping("/search")
     public ContractorsPagePayload searchContractors(
             @RequestBody ContractorFiltersPayload contractorFilters,
-            @RequestParam(defaultValue = "0", required = false) Integer page,
-            @RequestParam(defaultValue = "10", required = false) Integer contentSize) {
+            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "10", required = false) int contentSize) {
         return contractorService.getByFilters(contractorFilters, page, contentSize);
+    }
+
+    @PostMapping("/jdbc/search")
+    public ContractorsPagePayload searchContractorsJdbc(@RequestBody ContractorFiltersPayload contractorFilters,
+                                                        @RequestParam(defaultValue = "0", required = false) int page,
+                                                        @RequestParam(defaultValue = "10", required = false) int contentSize) {
+        return contractorService.getByFiltersJdbc(contractorFilters, page, contentSize);
     }
 
     @ExceptionHandler(ContractorNotFoundException.class)

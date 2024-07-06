@@ -9,4 +9,6 @@ public interface ContractorService extends CrudService<Contractor, String> {
 
     ContractorsPagePayload getByFilters(ContractorFiltersPayload filters, int page, int contentSize);
 
+    ContractorsPagePayload getByFiltersJdbc(ContractorFiltersPayload filters, int page, int contentSize);
+
 }

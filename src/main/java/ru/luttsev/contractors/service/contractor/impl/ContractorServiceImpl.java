@@ -13,6 +13,7 @@ import ru.luttsev.contractors.payload.contractor.ContractorResponsePayload;
 import ru.luttsev.contractors.payload.contractor.ContractorSpecification;
 import ru.luttsev.contractors.payload.contractor.ContractorsPagePayload;
 import ru.luttsev.contractors.repository.ContractorRepository;
+import ru.luttsev.contractors.repository.jdbc.ContractorJdbcRepository;
 import ru.luttsev.contractors.service.contractor.ContractorService;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 public class ContractorServiceImpl implements ContractorService {
 
     private final ContractorRepository contractorRepository;
+    private final ContractorJdbcRepository contractorJdbcRepository;
 
     @Override
     public List<Contractor> getAll() {
@@ -72,6 +74,12 @@ public class ContractorServiceImpl implements ContractorService {
         return new ContractorsPagePayload(contractorsPage.getNumber(),
                 contractorsPage.getNumberOfElements(),
                 contractorsPage.get().map(ContractorResponsePayload::new).toList());
+    }
+
+    @Override
+    public ContractorsPagePayload getByFiltersJdbc(ContractorFiltersPayload filters, int page, int contentSize) {
+        Page<Contractor> contractorPage = contractorJdbcRepository.getContractorsByFilters(filters, page, contentSize);
+        return new ContractorsPagePayload(page, contractorPage.getNumberOfElements(), contractorPage.get().map(ContractorResponsePayload::new).toList());
     }
 
 }
