@@ -5,6 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.luttsev.contractors.entity.OrgForm;
 
+/**
+ * DTO запроса на сохранение или обновление формы организации
+ * @author Yuri Luttsev
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

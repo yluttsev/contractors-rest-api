@@ -10,17 +10,30 @@ import ru.luttsev.contractors.service.country.CountryService;
 
 import java.util.List;
 
+/**
+ * Сервис для работы со странами
+ * @author Yuri Luttsev
+ */
 @Service
 @RequiredArgsConstructor
 public class CountryServiceImpl implements CountryService {
 
     private final CountryRepository countryRepository;
 
+    /**
+     * Получение всех стран
+     * @return список {@link Country сущностей стран}
+     */
     @Override
     public List<Country> getAll() {
         return countryRepository.findAll();
     }
 
+    /**
+     * Получение страны по ID
+     * @param id ID страны
+     * @return {@link Country сущность страны}
+     */
     @Override
     public Country getById(String id) {
         return countryRepository.findById(id).orElseThrow(
@@ -28,6 +41,11 @@ public class CountryServiceImpl implements CountryService {
         );
     }
 
+    /**
+     * Сохранение или обновление страны
+     * @param country {@link Country сущность страны}
+     * @return сохраненная или обновленная {@link Country страна}
+     */
     @Override
     @Transactional
     public Country saveOrUpdate(Country country) {
@@ -40,6 +58,10 @@ public class CountryServiceImpl implements CountryService {
         return countryRepository.save(country);
     }
 
+    /**
+     * Удаление страны по ID
+     * @param id ID страны
+     */
     @Override
     @Transactional
     public void deleteById(String id) {

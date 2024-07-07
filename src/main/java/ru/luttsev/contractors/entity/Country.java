@@ -9,6 +9,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Сущность страны в БД
+ * @author Yuri Luttsev
+ */
 @Entity
 @Table(name = "country")
 @AllArgsConstructor

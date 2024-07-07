@@ -5,6 +5,10 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * DTO страницы с информацией о контрагентах
+ * @author Yuri Luttsev
+ */
 @AllArgsConstructor
 @Data
 public class ContractorsPagePayload {

@@ -10,6 +10,10 @@ import ru.luttsev.contractors.payload.country.CountryResponsePayload;
 import ru.luttsev.contractors.payload.industry.IndustryResponsePayload;
 import ru.luttsev.contractors.payload.orgform.OrgFormResponsePayload;
 
+/**
+ * DTO запроса на сохранение или обновление контрагента
+ * @author Yuri Luttsev
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

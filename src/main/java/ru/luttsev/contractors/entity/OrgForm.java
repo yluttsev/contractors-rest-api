@@ -12,6 +12,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Сущность формы организации в БД
+ * @author Yuri Luttsev
+ */
 @Entity
 @Table(name = "org_form")
 @AllArgsConstructor

@@ -5,6 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import ru.luttsev.contractors.payload.industry.IndustryResponsePayload;
 
+/**
+ * DTO фильтров поиска контрагента
+ * @author Yuri Luttsev
+ */
 @Data
 @Builder
 public class ContractorFiltersPayload {

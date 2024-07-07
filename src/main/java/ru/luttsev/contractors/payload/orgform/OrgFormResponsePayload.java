@@ -6,6 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.luttsev.contractors.entity.OrgForm;
 
+/**
+ * DTO формы организации
+ * @author Yuri Luttsev
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -16,11 +20,19 @@ public class OrgFormResponsePayload {
 
     private String name;
 
+    /**
+     * Преобразование сущности в DTO
+     * @param orgForm {@link OrgForm сущность формы организации}
+     */
     public OrgFormResponsePayload(OrgForm orgForm) {
         this.id = orgForm.getId();
         this.name = orgForm.getName();
     }
 
+    /**
+     * Проеобразование DTO в сущность
+     * @return {@link OrgForm сущность формы организации}
+     */
     public OrgForm toEntity() {
         return OrgForm.builder()
                 .id(this.id)

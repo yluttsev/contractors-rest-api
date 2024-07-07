@@ -11,6 +11,10 @@ import ru.luttsev.contractors.entity.OrgForm;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Класс для определения спецификации фильтров поиска контрагентов
+ * @author Yuri Luttsev
+ */
 public final class ContractorSpecification {
 
     private ContractorSpecification() {

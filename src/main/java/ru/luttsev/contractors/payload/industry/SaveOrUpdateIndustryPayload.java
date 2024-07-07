@@ -5,6 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.luttsev.contractors.entity.Industry;
 
+/**
+ * DTO запроса на сохранение или обновление промышленности
+ * @author Yuri Luttsev
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

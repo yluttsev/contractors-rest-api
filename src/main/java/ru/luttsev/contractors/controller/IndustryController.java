@@ -17,9 +17,15 @@ import ru.luttsev.contractors.exception.IndustryNotFoundException;
 import ru.luttsev.contractors.payload.industry.IndustryResponsePayload;
 import ru.luttsev.contractors.payload.industry.SaveOrUpdateIndustryPayload;
 import ru.luttsev.contractors.service.industry.IndustryService;
+import ru.luttsev.springbootstarterauditlib.LogLevel;
+import ru.luttsev.springbootstarterauditlib.annotation.WebAuditLog;
 
 import java.util.List;
 
+/**
+ * Контроллер для рботы с объектами промышленности
+ * @author Yuri Luttsev
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/industry")
@@ -27,6 +33,11 @@ public class IndustryController {
 
     private final IndustryService industryService;
 
+    /**
+     * Получение всех объектов промышленности
+     * @return список {@link IndustryResponsePayload DTO} промышленностей
+     */
+    @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/all")
     public List<IndustryResponsePayload> getAllIndustries() {
         return industryService.getAll().stream()
@@ -34,30 +45,53 @@ public class IndustryController {
                 .toList();
     }
 
+    /**
+     * Получение объекта промышленности по ID
+     * @param id ID объекта промышленности
+     * @return {@link IndustryResponsePayload DTO} объекта промышленности
+     */
+    @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
     public IndustryResponsePayload getIndustryById(@PathVariable("id") Integer id) {
         Industry industry = industryService.getById(id);
         return new IndustryResponsePayload(industry);
     }
 
+    /**
+     * Сохранение или обновление объекта промышленности
+     * @param saveOrUpdateIndustryPayload {@link SaveOrUpdateIndustryPayload запрос} на сохранение или обновление<br>
+     *                                                                              объекта промышленности
+     * @return {@link IndustryResponsePayload DTO} сохраненного или обновленного объекта промышленности
+     */
+    @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
-    public IndustryResponsePayload saveIndustry(@RequestBody SaveOrUpdateIndustryPayload saveOrUpdateIndustryPayload) {
+    public IndustryResponsePayload saveOrUpdateIndustry(@RequestBody SaveOrUpdateIndustryPayload saveOrUpdateIndustryPayload) {
         Industry industry = saveOrUpdateIndustryPayload.toEntity();
         Industry savedIndustry = industryService.saveOrUpdate(industry);
         return new IndustryResponsePayload(savedIndustry);
     }
 
+    /**
+     * Удаление объекта промышленности по ID
+     * @param industryId ID объекта промышленности
+     * @return ответ с кодом 200, если удаление прошло успешно
+     */
+    @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteCountry(@PathVariable("id") Integer industryId) {
         industryService.deleteById(industryId);
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Обработчик 404 ошибки
+     * @param e {@link IndustryNotFoundException класс исключения}
+     * @return {@link ProblemDetail ответ} с деталями ошибки
+     */
+    @WebAuditLog(logLevel = LogLevel.INFO)
     @ExceptionHandler(IndustryNotFoundException.class)
-    public ResponseEntity<ProblemDetail> industryNotFound(IndustryNotFoundException e) {
-        return ResponseEntity.of(ProblemDetail.forStatusAndDetail(
-                HttpStatus.NOT_FOUND, e.getMessage()
-        )).build();
+    public ProblemDetail industryNotFound(IndustryNotFoundException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
 }

@@ -11,6 +11,10 @@ import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
 
 import java.util.List;
 
+/**
+ * Репозиторий для поиска контрагента по фильтрам с помощью JDBC
+ * @author Yuri Luttsev
+ */
 @Repository
 @RequiredArgsConstructor
 public class ContractorJdbcRepository {
@@ -31,6 +35,13 @@ public class ContractorJdbcRepository {
             where c.is_active = true
             """;
 
+    /**
+     * Получение контрагентов по фильтрам поиска
+     * @param filters {@link ContractorFiltersPayload фильтры поиска}
+     * @param page номер страницы
+     * @param contentSize количество элементов на странице
+     * @return {@link Page страница} с контрагентами
+     */
     public Page<Contractor> getContractorsByFilters(ContractorFiltersPayload filters, int page, int contentSize) {
         StringBuilder query = new StringBuilder(baseQuery);
 

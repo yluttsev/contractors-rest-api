@@ -22,6 +22,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
+/**
+ * Сущность контрагента в БД
+ * @author Yuri Luttsev
+ */
 @Entity
 @Table(name = "contractor")
 @AllArgsConstructor

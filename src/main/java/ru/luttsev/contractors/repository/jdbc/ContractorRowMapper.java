@@ -9,6 +9,10 @@ import ru.luttsev.contractors.entity.OrgForm;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * RowMapper для преобразования ResultSet в объект контрагента
+ * @author Yuri Luttsev
+ */
 public class ContractorRowMapper implements RowMapper<Contractor> {
 
     @Override
