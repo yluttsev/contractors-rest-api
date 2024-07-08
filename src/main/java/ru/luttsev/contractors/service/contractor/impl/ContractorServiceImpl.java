@@ -66,20 +66,6 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     @Transactional
     public Contractor saveOrUpdate(Contractor contractor) {
-        if (contractor.getId() != null && contractorRepository.existsById(contractor.getId())) {
-            Contractor contractorEntity = getById(contractor.getId());
-            contractorEntity.setId(contractor.getId());
-            contractorEntity.setParentId(contractor.getParentId());
-            contractorEntity.setName(contractor.getName());
-            contractorEntity.setFullName(contractor.getFullName());
-            contractorEntity.setId(contractor.getInn());
-            contractorEntity.setOgrn(contractor.getOgrn());
-            contractorEntity.setCountry(contractor.getCountry());
-            contractorEntity.setIndustry(contractor.getIndustry());
-            contractorEntity.setOrgForm(contractor.getOrgForm());
-            contractorEntity.setIsActive(contractor.getIsActive());
-            return contractorRepository.save(contractorEntity);
-        }
         return contractorRepository.save(contractor);
     }
 

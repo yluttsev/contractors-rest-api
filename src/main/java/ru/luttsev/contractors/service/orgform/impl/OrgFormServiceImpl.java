@@ -49,12 +49,6 @@ public class OrgFormServiceImpl implements OrgFormService {
     @Override
     @Transactional
     public OrgForm saveOrUpdate(OrgForm orgForm) {
-        if (orgForm.getId() != null && orgFormRepository.existsById(orgForm.getId())) {
-            OrgForm orgFormEntity = getById(orgForm.getId());
-            orgFormEntity.setId(orgForm.getId());
-            orgFormEntity.setName(orgForm.getName());
-            return orgFormRepository.save(orgFormEntity);
-        }
         return orgFormRepository.save(orgForm);
     }
 

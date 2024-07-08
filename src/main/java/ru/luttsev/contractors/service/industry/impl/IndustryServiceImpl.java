@@ -49,12 +49,6 @@ public class IndustryServiceImpl implements IndustryService {
     @Override
     @Transactional
     public Industry saveOrUpdate(Industry industry) {
-        if (industry.getId() != null && industryRepository.existsById(industry.getId())) {
-            Industry industryEntity = getById(industry.getId());
-            industryEntity.setId(industry.getId());
-            industryEntity.setName(industry.getName());
-            return industryRepository.save(industryEntity);
-        }
         return industryRepository.save(industry);
     }
 
