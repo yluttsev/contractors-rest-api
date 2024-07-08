@@ -21,7 +21,7 @@ public class ContractorJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final String baseQuery = """
+    private static final String BASE_QUERY = """
             select c.id as c_id, c.parent_id as c_parent_id, c.name as c_name, c.name_full as c_name_full, c.inn as c_inn,
             c.ogrn as c_ogrn, cn.id as cn_id, cn.name as cn_name, cn.is_active as cn_is_active,
             i.id as i_id, i.name as i_name, i.is_active as i_is_active,
@@ -43,7 +43,7 @@ public class ContractorJdbcRepository {
      * @return {@link Page страница} с контрагентами
      */
     public Page<Contractor> getContractorsByFilters(ContractorFiltersPayload filters, int page, int contentSize) {
-        StringBuilder query = new StringBuilder(baseQuery);
+        StringBuilder query = new StringBuilder(BASE_QUERY);
 
         if (filters.getId() != null) {
             query.append(" and c.id = '").append(filters.getId()).append("'");
