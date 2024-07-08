@@ -3,9 +3,10 @@ package ru.luttsev.contractors.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = OrgFormController.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 public class OrgFormControllerTests {
 
@@ -39,6 +40,9 @@ public class OrgFormControllerTests {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private ModelMapper mapper;
 
     private List<OrgForm> createOrgForms() {
         return List.of(
@@ -59,7 +63,8 @@ public class OrgFormControllerTests {
                         status().isOk(),
                         content().json(
                                 objectMapper.writeValueAsString(
-                                        createOrgForms().stream().map(OrgFormResponsePayload::new).toList()
+                                        createOrgForms().stream().map(orgForm -> mapper.map(orgForm, OrgFormResponsePayload.class))
+                                                .toList()
                                 ),
                                 true)
                 );
@@ -78,7 +83,7 @@ public class OrgFormControllerTests {
                         status().isOk(),
                         content().json(
                                 objectMapper.writeValueAsString(
-                                        new OrgFormResponsePayload(orgForms.get(0))
+                                        mapper.map(orgForms.get(0), OrgFormResponsePayload.class)
                                 ),
                                 true)
                 );
@@ -103,17 +108,19 @@ public class OrgFormControllerTests {
     @DisplayName("Создание нового объекта OrgForm")
     public void testCreateNewOrgForm() throws Exception {
         OrgForm orgForm = createOrgForms().get(0);
+        orgForm.setIsActive(null);
+        SaveOrUpdateOrgFormPayload orgFormPayload = mapper.map(orgForm, SaveOrUpdateOrgFormPayload.class);
+        orgForm.setIsActive(true);
 
-        when(orgFormService.saveOrUpdate(orgForm)).thenReturn(orgForm);
+        when(orgFormService.saveOrUpdate(mapper.map(orgFormPayload, OrgForm.class))).thenReturn(orgForm);
 
         mockMvc.perform(put("/orgform/save")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new SaveOrUpdateOrgFormPayload(orgForm.getId(),
-                                orgForm.getName()))))
+                        .content(objectMapper.writeValueAsString(orgFormPayload)))
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        content().json(objectMapper.writeValueAsString(new OrgFormResponsePayload(orgForm)), true)
+                        content().json(objectMapper.writeValueAsString(mapper.map(orgForm, OrgFormResponsePayload.class)), true)
                 );
     }
 

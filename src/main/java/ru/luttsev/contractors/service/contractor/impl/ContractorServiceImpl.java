@@ -2,6 +2,7 @@ package ru.luttsev.contractors.service.contractor.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,6 +21,7 @@ import java.util.List;
 
 /**
  * Сервис для работы с контрагентами
+ *
  * @author Yuri Luttsev
  */
 @Service
@@ -27,10 +29,14 @@ import java.util.List;
 public class ContractorServiceImpl implements ContractorService {
 
     private final ContractorRepository contractorRepository;
+
     private final ContractorJdbcRepository contractorJdbcRepository;
+
+    private final ModelMapper mapper;
 
     /**
      * Получение всех контрагентов
+     *
      * @return список {@link Contractor сущностей контрагентов}
      */
     @Override
@@ -40,6 +46,7 @@ public class ContractorServiceImpl implements ContractorService {
 
     /**
      * Получение контрагента по ID
+     *
      * @param id ID контрагента
      * @return {@link Contractor сущность контрагента}
      */
@@ -52,6 +59,7 @@ public class ContractorServiceImpl implements ContractorService {
 
     /**
      * Сохранение или обновление контрагента
+     *
      * @param contractor {@link Contractor сущность контрагента}
      * @return сохраненый или обновленный {@link Contractor контрагент}
      */
@@ -77,6 +85,7 @@ public class ContractorServiceImpl implements ContractorService {
 
     /**
      * Удаление контрагента по ID
+     *
      * @param id ID контрагента
      */
     @Override
@@ -91,8 +100,9 @@ public class ContractorServiceImpl implements ContractorService {
 
     /**
      * Поиск контрагентов по фильтрам
-     * @param filters {@link ContractorFiltersPayload фильтры поиска} контрагентов
-     * @param page номер страницы
+     *
+     * @param filters     {@link ContractorFiltersPayload фильтры поиска} контрагентов
+     * @param page        номер страницы
      * @param contentSize количество элементов на странице
      * @return {@link ContractorsPagePayload страница с контрагентами}
      */
@@ -102,20 +112,25 @@ public class ContractorServiceImpl implements ContractorService {
         Page<Contractor> contractorsPage = contractorRepository.findAll(specification, PageRequest.of(page, contentSize));
         return new ContractorsPagePayload(contractorsPage.getNumber(),
                 contractorsPage.getNumberOfElements(),
-                contractorsPage.get().map(ContractorResponsePayload::new).toList());
+                contractorsPage.get().map(contractor -> mapper.map(contractor, ContractorResponsePayload.class)).toList());
     }
 
     /**
      * Поиск контрагентов по фильтрам с помощью JDBC
-     * @param filters {@link ContractorFiltersPayload фильтры поиска} контрагентов
-     * @param page номер страницы
+     *
+     * @param filters     {@link ContractorFiltersPayload фильтры поиска} контрагентов
+     * @param page        номер страницы
      * @param contentSize количество элементов на странице
      * @return {@link ContractorsPagePayload страница с контрагентами}
      */
     @Override
     public ContractorsPagePayload getByFiltersJdbc(ContractorFiltersPayload filters, int page, int contentSize) {
         Page<Contractor> contractorPage = contractorJdbcRepository.getContractorsByFilters(filters, page, contentSize);
-        return new ContractorsPagePayload(page, contractorPage.getNumberOfElements(), contractorPage.get().map(ContractorResponsePayload::new).toList());
+        return ContractorsPagePayload.builder()
+                .page(page)
+                .items(contractorPage.getNumberOfElements())
+                .contractors(contractorPage.get().map(contractor -> mapper.map(contractor, ContractorResponsePayload.class)).toList())
+                .build();
     }
 
 }

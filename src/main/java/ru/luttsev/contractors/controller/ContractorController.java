@@ -1,6 +1,7 @@
 package ru.luttsev.contractors.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.exception.ContractorNotFoundException;
 import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
 import ru.luttsev.contractors.payload.contractor.ContractorResponsePayload;
@@ -35,42 +37,49 @@ public class ContractorController {
 
     private final ContractorService contractorService;
 
+    private final ModelMapper mapper;
+
     /**
      * Получение всех контрагентов
+     *
      * @return список {@link ContractorResponsePayload DTO контрагентов}
      */
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/all")
     public List<ContractorResponsePayload> getAllContractors() {
         return contractorService.getAll().stream()
-                .map(ContractorResponsePayload::new)
+                .map(contractor -> mapper.map(contractor, ContractorResponsePayload.class))
                 .toList();
     }
 
     /**
      * Получение контрагента по ID
+     *
      * @param contractorId ID контрагента
      * @return {@link ContractorResponsePayload DTO} контрагента
      */
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
     public ContractorResponsePayload getContractorById(@PathVariable("id") String contractorId) {
-        return new ContractorResponsePayload(contractorService.getById(contractorId));
+        return mapper.map(contractorService.getById(contractorId), ContractorResponsePayload.class);
     }
 
     /**
      * Сохранение или обновление контрагента
+     *
      * @param contractorPayload {@link SaveOrUpdateContractorPayload запрос} на сохранение или обновление контрагента
      * @return {@link ContractorResponsePayload DTO} сохраненного или обновленного контрагента
      */
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
     public ContractorResponsePayload saveOrUpdateContractor(@RequestBody SaveOrUpdateContractorPayload contractorPayload) {
-        return new ContractorResponsePayload(contractorService.saveOrUpdate(contractorPayload.toEntity()));
+        Contractor savedContractor = contractorService.saveOrUpdate(mapper.map(contractorPayload, Contractor.class));
+        return mapper.map(savedContractor, ContractorResponsePayload.class);
     }
 
     /**
      * Удаление контрагента по ID
+     *
      * @param contractorId ID контрагента
      * @return ответ с кодом 200, если удаление прошло успешно
      */
@@ -83,9 +92,10 @@ public class ContractorController {
 
     /**
      * Поиск контрагента по фильтрам
+     *
      * @param contractorFilters {@link ContractorFiltersPayload фильтры} поиска
-     * @param page номер страницы
-     * @param contentSize количество элементов на странице
+     * @param page              номер страницы
+     * @param contentSize       количество элементов на странице
      * @return {@link ContractorsPagePayload страницу} с контрагентами
      */
     @WebAuditLog(logLevel = LogLevel.INFO)
@@ -99,9 +109,10 @@ public class ContractorController {
 
     /**
      * Поиск контрагента по фильтрам с помощью JDBC
+     *
      * @param contractorFilters {@link ContractorFiltersPayload фильтры} поиска
-     * @param page номер страницы
-     * @param contentSize количество элементов на странице
+     * @param page              номер страницы
+     * @param contentSize       количество элементов на странице
      * @return {@link ContractorsPagePayload страницу} с контрагентами
      */
     @WebAuditLog(logLevel = LogLevel.INFO)
@@ -114,6 +125,7 @@ public class ContractorController {
 
     /**
      * Обработчик 404 ошибки
+     *
      * @param e {@link ContractorNotFoundException класс исключения}
      * @return {@link ProblemDetail ответ} с деталями ошибки
      */

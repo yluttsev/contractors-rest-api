@@ -1,6 +1,7 @@
 package ru.luttsev.contractors.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,8 @@ public class CountryController {
 
     private final CountryService countryService;
 
+    private final ModelMapper mapper;
+
     /**
      * Получение всех стран
      * @return список {@link CountryResponsePayload DTO стран}
@@ -42,7 +45,7 @@ public class CountryController {
     @GetMapping("/all")
     public List<CountryResponsePayload> getAllCountries() {
         return countryService.getAll().stream()
-                .map(CountryResponsePayload::new)
+                .map(country -> mapper.map(country, CountryResponsePayload.class))
                 .collect(Collectors.toList());
     }
 
@@ -55,7 +58,7 @@ public class CountryController {
     @GetMapping("/{id}")
     public CountryResponsePayload getCountryById(@PathVariable("id") String countryId) {
         Country country = countryService.getById(countryId);
-        return new CountryResponsePayload(country);
+        return mapper.map(country, CountryResponsePayload.class);
     }
 
     /**
@@ -66,9 +69,9 @@ public class CountryController {
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
     public CountryResponsePayload saveOrUpdateCountry(@RequestBody SaveOrUpdateCountryPayload saveOrUpdateCountryPayload) {
-        Country country = saveOrUpdateCountryPayload.toEntity();
+        Country country = mapper.map(saveOrUpdateCountryPayload, Country.class);
         Country savedCountry = countryService.saveOrUpdate(country);
-        return new CountryResponsePayload(savedCountry);
+        return mapper.map(savedCountry, CountryResponsePayload.class);
     }
 
     /**

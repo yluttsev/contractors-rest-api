@@ -3,15 +3,17 @@ package ru.luttsev.contractors.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.luttsev.contractors.entity.Industry;
 import ru.luttsev.contractors.exception.IndustryNotFoundException;
 import ru.luttsev.contractors.payload.industry.IndustryResponsePayload;
+import ru.luttsev.contractors.payload.industry.SaveOrUpdateIndustryPayload;
 import ru.luttsev.contractors.service.industry.IndustryService;
 
 import java.util.List;
@@ -26,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = IndustryController.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 public class IndustryControllerTests {
 
@@ -38,6 +40,9 @@ public class IndustryControllerTests {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private ModelMapper mapper;
 
     private Industry createItIndustry() {
         return new Industry(1, "Информационные технологии", true);
@@ -102,16 +107,20 @@ public class IndustryControllerTests {
     @DisplayName("Создание нового объекта промышленности")
     public void testCreateNewIndustry() throws Exception {
         Industry it = createItIndustry();
+        it.setIsActive(null);
+        SaveOrUpdateIndustryPayload industryPayload = mapper.map(it, SaveOrUpdateIndustryPayload.class);
+        it.setIsActive(true);
 
-        when(industryService.saveOrUpdate(it)).thenReturn(it);
+        when(industryService.saveOrUpdate(mapper.map(industryPayload, Industry.class))).thenReturn(it);
 
         mockMvc.perform(put("/industry/save")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new IndustryResponsePayload(it))))
+                        .content(objectMapper.writeValueAsString(industryPayload)))
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        content().json(objectMapper.writeValueAsString(new IndustryResponsePayload(it)), true)
+                        content().json(objectMapper.writeValueAsString(mapper.map(it, IndustryResponsePayload.class)),
+                                true)
                 );
     }
 

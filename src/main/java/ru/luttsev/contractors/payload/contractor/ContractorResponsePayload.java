@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.payload.country.CountryResponsePayload;
 import ru.luttsev.contractors.payload.industry.IndustryResponsePayload;
 import ru.luttsev.contractors.payload.orgform.OrgFormResponsePayload;
@@ -40,17 +39,5 @@ public class ContractorResponsePayload {
 
     @JsonProperty("org_form")
     private OrgFormResponsePayload orgForm;
-
-    public ContractorResponsePayload(Contractor contractor) {
-        this.id = contractor.getId();
-        this.parentId = contractor.getParentId();
-        this.name = contractor.getName();
-        this.fullName = contractor.getFullName();
-        this.inn = contractor.getInn();
-        this.ogrn = contractor.getOgrn();
-        this.country = new CountryResponsePayload(contractor.getCountry());
-        this.industry = new IndustryResponsePayload(contractor.getIndustry());
-        this.orgForm = new OrgFormResponsePayload(contractor.getOrgForm());
-    }
 
 }

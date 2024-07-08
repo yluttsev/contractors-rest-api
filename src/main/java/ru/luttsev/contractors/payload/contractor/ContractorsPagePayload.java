@@ -1,6 +1,7 @@
 package ru.luttsev.contractors.payload.contractor;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 @Data
+@Builder
 public class ContractorsPagePayload {
 
     private int page;

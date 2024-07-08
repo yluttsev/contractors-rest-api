@@ -1,6 +1,7 @@
 package ru.luttsev.contractors.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,8 @@ public class OrgFormController {
 
     private final OrgFormService orgFormService;
 
+    private final ModelMapper mapper;
+
     /**
      * Получение всех объектов форм организаций
      * @return список {@link OrgFormResponsePayload DTO} объектов форм организаций
@@ -41,7 +44,7 @@ public class OrgFormController {
     @GetMapping("/all")
     public List<OrgFormResponsePayload> getAll() {
         return orgFormService.getAll().stream()
-                .map(OrgFormResponsePayload::new)
+                .map(orgForm -> mapper.map(orgForm, OrgFormResponsePayload.class))
                 .toList();
     }
 
@@ -53,7 +56,7 @@ public class OrgFormController {
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
     public OrgFormResponsePayload getById(@PathVariable("id") Integer orgFormId) {
-        return new OrgFormResponsePayload(orgFormService.getById(orgFormId));
+        return mapper.map(orgFormService.getById(orgFormId), OrgFormResponsePayload.class);
     }
 
     /**
@@ -65,8 +68,8 @@ public class OrgFormController {
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
     public OrgFormResponsePayload saveOrUpdate(@RequestBody SaveOrUpdateOrgFormPayload orgFormPayload) {
-        OrgForm entity = orgFormPayload.toEntity();
-        return new OrgFormResponsePayload(orgFormService.saveOrUpdate(entity));
+        OrgForm entity = mapper.map(orgFormPayload, OrgForm.class);
+        return mapper.map(orgFormService.saveOrUpdate(entity), OrgFormResponsePayload.class);
     }
 
     /**

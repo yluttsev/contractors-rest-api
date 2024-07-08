@@ -3,9 +3,11 @@ package ru.luttsev.contractors.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = CountryController.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 public class CountryControllerTests {
 
@@ -38,6 +40,9 @@ public class CountryControllerTests {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private ModelMapper mapper;
 
     private Country createRussia() {
         return new Country("RUS", "Russia", true);
@@ -98,15 +103,17 @@ public class CountryControllerTests {
     @DisplayName("Создание новой страны")
     public void testCreateNewCountry() throws Exception {
         Country russia = createRussia();
-        when(countryService.saveOrUpdate(russia)).thenReturn(russia);
+        russia.setIsActive(null);
+        when(countryService.saveOrUpdate(russia)).thenReturn(createRussia());
 
         mockMvc.perform(put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CountryResponsePayload(russia))))
+                        .content(objectMapper.writeValueAsString(mapper.map(createRussia(), CountryResponsePayload.class))))
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        content().json(objectMapper.writeValueAsString(new CountryResponsePayload(russia)), true)
+                        content().json(objectMapper.writeValueAsString(mapper.map(createRussia(), CountryResponsePayload.class)),
+                                true)
                 );
     }
 

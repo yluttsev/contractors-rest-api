@@ -1,6 +1,7 @@
 package ru.luttsev.contractors.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,8 @@ public class IndustryController {
 
     private final IndustryService industryService;
 
+    private final ModelMapper mapper;
+
     /**
      * Получение всех объектов промышленности
      * @return список {@link IndustryResponsePayload DTO} промышленностей
@@ -41,7 +44,7 @@ public class IndustryController {
     @GetMapping("/all")
     public List<IndustryResponsePayload> getAllIndustries() {
         return industryService.getAll().stream()
-                .map(IndustryResponsePayload::new)
+                .map(industry -> mapper.map(industry, IndustryResponsePayload.class))
                 .toList();
     }
 
@@ -54,7 +57,7 @@ public class IndustryController {
     @GetMapping("/{id}")
     public IndustryResponsePayload getIndustryById(@PathVariable("id") Integer id) {
         Industry industry = industryService.getById(id);
-        return new IndustryResponsePayload(industry);
+        return mapper.map(industry, IndustryResponsePayload.class);
     }
 
     /**
@@ -66,9 +69,9 @@ public class IndustryController {
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
     public IndustryResponsePayload saveOrUpdateIndustry(@RequestBody SaveOrUpdateIndustryPayload saveOrUpdateIndustryPayload) {
-        Industry industry = saveOrUpdateIndustryPayload.toEntity();
+        Industry industry = mapper.map(saveOrUpdateIndustryPayload, Industry.class);
         Industry savedIndustry = industryService.saveOrUpdate(industry);
-        return new IndustryResponsePayload(savedIndustry);
+        return mapper.map(savedIndustry, IndustryResponsePayload.class);
     }
 
     /**
