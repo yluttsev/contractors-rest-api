@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -14,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.exception.CountryNotFoundException;
 import ru.luttsev.contractors.payload.country.CountryResponsePayload;
+import ru.luttsev.contractors.payload.country.SaveOrUpdateCountryPayload;
 import ru.luttsev.contractors.service.country.CountryService;
 
 import java.util.List;
@@ -104,11 +104,12 @@ public class CountryControllerTests {
     public void testCreateNewCountry() throws Exception {
         Country russia = createRussia();
         russia.setIsActive(null);
-        when(countryService.saveOrUpdate(russia)).thenReturn(createRussia());
+        SaveOrUpdateCountryPayload countryPayload = mapper.map(russia, SaveOrUpdateCountryPayload.class);
+        when(countryService.saveOrUpdate(mapper.map(countryPayload, Country.class))).thenReturn(createRussia());
 
         mockMvc.perform(put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(mapper.map(createRussia(), CountryResponsePayload.class))))
+                        .content(objectMapper.writeValueAsString(countryPayload)))
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
