@@ -34,6 +34,6 @@ public class Industry {
     private String name;
 
     @Column(name = "is_active")
-    private Boolean isActive;
+    private Boolean isActive = true;
 
 }
