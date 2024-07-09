@@ -1,5 +1,12 @@
 package ru.luttsev.contractors.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -27,6 +34,7 @@ import java.util.List;
  * Контроллер для работы с объектами форм организаций
  * @author Yuri Luttsev
  */
+@Tag(name = "orgform", description = "API для работы с формами организации")
 @RestController
 @RequestMapping("/orgform")
 @RequiredArgsConstructor
@@ -40,6 +48,21 @@ public class OrgFormController {
      * Получение всех объектов форм организаций
      * @return список {@link OrgFormResponsePayload DTO} объектов форм организаций
      */
+    @Operation(summary = "Получение списка всех форм организации")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное получение списка всех форм организации",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = OrgFormResponsePayload.class)
+                                    )
+                            )
+                    }
+            )
+    })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/all")
     public List<OrgFormResponsePayload> getAll() {
@@ -53,6 +76,29 @@ public class OrgFormController {
      * @param orgFormId ID объекта формы организации
      * @return {@link OrgFormResponsePayload DTO} объекта формы организации
      */
+    @Operation(summary = "Получение формы организации по ID")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное получение формы организации по ID",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = OrgFormResponsePayload.class)
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Форма организации с указанным ID не найдена",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ProblemDetail.class)
+                            )
+                    }
+            )
+    })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
     public OrgFormResponsePayload getById(@PathVariable("id") Integer orgFormId) {
@@ -65,6 +111,20 @@ public class OrgFormController {
      *                                                                объекта формы организации
      * @return {@link OrgFormResponsePayload DTO} сохраненного или обновленного объекта формы организации
      */
+    @Operation(summary = "Сохранение формы организации", description = "Сохранение формы организации с заранее указзаным ID" +
+            " или обновление существующей формы организации")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное сохранение формы организации",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = OrgFormResponsePayload.class)
+                            )
+                    }
+            )
+    })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
     public OrgFormResponsePayload saveOrUpdate(@RequestBody SaveOrUpdateOrgFormPayload orgFormPayload) {
@@ -77,6 +137,23 @@ public class OrgFormController {
      * @param orgFormId ID объекта формы организации
      * @return ответ с кодом 200, если удаление прошло успешно
      */
+    @Operation(summary = "Удаление формы организации по ID")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное удаление формы организации по ID"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Форма организации с указанным ID не найдена",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ProblemDetail.class)
+                            )
+                    }
+            )
+    })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable("id") Integer orgFormId) {

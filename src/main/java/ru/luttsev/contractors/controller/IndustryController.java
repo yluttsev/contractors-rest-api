@@ -1,5 +1,12 @@
 package ru.luttsev.contractors.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -27,6 +34,7 @@ import java.util.List;
  * Контроллер для рботы с объектами промышленности
  * @author Yuri Luttsev
  */
+@Tag(name = "industry", description = "API для работы с промышленностями")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/industry")
@@ -40,6 +48,21 @@ public class IndustryController {
      * Получение всех объектов промышленности
      * @return список {@link IndustryResponsePayload DTO} промышленностей
      */
+    @Operation(summary = "Получение списка всех промышленностей")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное получение списка всех промышленностей",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = IndustryResponsePayload.class)
+                                    )
+                            )
+                    }
+            )
+    })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/all")
     public List<IndustryResponsePayload> getAllIndustries() {
@@ -53,6 +76,29 @@ public class IndustryController {
      * @param id ID объекта промышленности
      * @return {@link IndustryResponsePayload DTO} объекта промышленности
      */
+    @Operation(summary = "Получение промышленности по ID")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное получение промышленности по ID",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = IndustryResponsePayload.class)
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Промышленность с указанным ID не найдена",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ProblemDetail.class)
+                            )
+                    }
+            )
+    })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
     public IndustryResponsePayload getIndustryById(@PathVariable("id") Integer id) {
@@ -66,6 +112,20 @@ public class IndustryController {
      *                                                                              объекта промышленности
      * @return {@link IndustryResponsePayload DTO} сохраненного или обновленного объекта промышленности
      */
+    @Operation(summary = "Сохранение промышленности", description = "Сохранение промышленности с заранее известным ID" +
+            " или обновление существующей промышленности")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное сохранение промышленности",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = IndustryResponsePayload.class)
+                            )
+                    }
+            )
+    })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
     public IndustryResponsePayload saveOrUpdateIndustry(@RequestBody SaveOrUpdateIndustryPayload saveOrUpdateIndustryPayload) {
@@ -79,6 +139,23 @@ public class IndustryController {
      * @param industryId ID объекта промышленности
      * @return ответ с кодом 200, если удаление прошло успешно
      */
+    @Operation(summary = "Удаление промышленности по ID")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное удаление промышленности по ID"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Промышленность с указанным ID не найдена",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = IndustryResponsePayload.class)
+                            )
+                    }
+            )
+    })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteCountry(@PathVariable("id") Integer industryId) {
