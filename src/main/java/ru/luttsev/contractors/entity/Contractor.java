@@ -89,6 +89,7 @@ public class Contractor {
     private String modifyUserId;
 
     @Column(name = "is_active")
+    @Builder.Default
     private Boolean isActive = true;
 
 }
