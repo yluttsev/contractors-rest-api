@@ -189,8 +189,8 @@ public class ContractorController {
     @PostMapping("/search")
     public ContractorsPagePayload searchContractors(
             @RequestBody ContractorFiltersPayload contractorFilters,
-            @RequestParam(defaultValue = "0", required = false) int page,
-            @RequestParam(defaultValue = "10", required = false) int contentSize) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int contentSize) {
         return contractorService.getByFilters(contractorFilters, page, contentSize);
     }
 
