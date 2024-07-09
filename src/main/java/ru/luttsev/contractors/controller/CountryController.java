@@ -1,6 +1,7 @@
 package ru.luttsev.contractors.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 
 /**
  * Контроллер для работы со странами
+ *
  * @author Yuri Luttsev
  */
 @Tag(name = "country", description = "API для работы со странами")
@@ -47,6 +49,7 @@ public class CountryController {
 
     /**
      * Получение всех стран
+     *
      * @return список {@link CountryResponsePayload DTO стран}
      */
     @Operation(summary = "Получение списка всех стран")
@@ -74,6 +77,7 @@ public class CountryController {
 
     /**
      * Получение страны по ID
+     *
      * @param countryId ID страны
      * @return {@link CountryResponsePayload DTO} страны
      */
@@ -102,13 +106,15 @@ public class CountryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
-    public CountryResponsePayload getCountryById(@PathVariable("id") String countryId) {
+    public CountryResponsePayload getCountryById(@Parameter(description = "ID страны", required = true)
+                                                 @PathVariable("id") String countryId) {
         Country country = countryService.getById(countryId);
         return mapper.map(country, CountryResponsePayload.class);
     }
 
     /**
      * Сохранение или обновление страны
+     *
      * @param saveOrUpdateCountryPayload {@link SaveOrUpdateCountryPayload запрос} на сохранение или обновление страны
      * @return {@link CountryResponsePayload DTO} сохраненной или обновленной страны
      */
@@ -128,7 +134,9 @@ public class CountryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
-    public CountryResponsePayload saveOrUpdateCountry(@RequestBody SaveOrUpdateCountryPayload saveOrUpdateCountryPayload) {
+    public CountryResponsePayload saveOrUpdateCountry(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Страна для сохранения", required = true)
+            @RequestBody SaveOrUpdateCountryPayload saveOrUpdateCountryPayload) {
         Country country = mapper.map(saveOrUpdateCountryPayload, Country.class);
         Country savedCountry = countryService.saveOrUpdate(country);
         return mapper.map(savedCountry, CountryResponsePayload.class);
@@ -136,6 +144,7 @@ public class CountryController {
 
     /**
      * Удаление страны по ID
+     *
      * @param countryId ID страны
      * @return ответ с кодом 200, если удаление прошло успешно
      */
@@ -158,13 +167,15 @@ public class CountryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteCountry(@PathVariable("id") String countryId) {
+    public ResponseEntity<?> deleteCountry(@Parameter(description = "ID страны")
+                                           @PathVariable("id") String countryId) {
         countryService.deleteById(countryId);
         return ResponseEntity.ok().build();
     }
 
     /**
      * Обработчик 404 ошибки
+     *
      * @param e {@link CountryNotFoundException класс исключения}
      * @return {@link ProblemDetail ответ} с деталями ошибки
      */

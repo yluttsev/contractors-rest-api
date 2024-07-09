@@ -1,6 +1,7 @@
 package ru.luttsev.contractors.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,6 +33,7 @@ import java.util.List;
 
 /**
  * Контроллер для рботы с объектами промышленности
+ *
  * @author Yuri Luttsev
  */
 @Tag(name = "industry", description = "API для работы с промышленностями")
@@ -46,6 +48,7 @@ public class IndustryController {
 
     /**
      * Получение всех объектов промышленности
+     *
      * @return список {@link IndustryResponsePayload DTO} промышленностей
      */
     @Operation(summary = "Получение списка всех промышленностей")
@@ -73,6 +76,7 @@ public class IndustryController {
 
     /**
      * Получение объекта промышленности по ID
+     *
      * @param id ID объекта промышленности
      * @return {@link IndustryResponsePayload DTO} объекта промышленности
      */
@@ -101,15 +105,17 @@ public class IndustryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
-    public IndustryResponsePayload getIndustryById(@PathVariable("id") Integer id) {
+    public IndustryResponsePayload getIndustryById(@Parameter(description = "ID промышленности", required = true)
+                                                   @PathVariable("id") Integer id) {
         Industry industry = industryService.getById(id);
         return mapper.map(industry, IndustryResponsePayload.class);
     }
 
     /**
      * Сохранение или обновление объекта промышленности
+     *
      * @param saveOrUpdateIndustryPayload {@link SaveOrUpdateIndustryPayload запрос} на сохранение или обновление<br>
-     *                                                                              объекта промышленности
+     *                                    объекта промышленности
      * @return {@link IndustryResponsePayload DTO} сохраненного или обновленного объекта промышленности
      */
     @Operation(summary = "Сохранение промышленности", description = "Сохранение промышленности с заранее известным ID" +
@@ -128,7 +134,9 @@ public class IndustryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
-    public IndustryResponsePayload saveOrUpdateIndustry(@RequestBody SaveOrUpdateIndustryPayload saveOrUpdateIndustryPayload) {
+    public IndustryResponsePayload saveOrUpdateIndustry(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Промышленность для сохранения", required = true)
+            @RequestBody SaveOrUpdateIndustryPayload saveOrUpdateIndustryPayload) {
         Industry industry = mapper.map(saveOrUpdateIndustryPayload, Industry.class);
         Industry savedIndustry = industryService.saveOrUpdate(industry);
         return mapper.map(savedIndustry, IndustryResponsePayload.class);
@@ -136,6 +144,7 @@ public class IndustryController {
 
     /**
      * Удаление объекта промышленности по ID
+     *
      * @param industryId ID объекта промышленности
      * @return ответ с кодом 200, если удаление прошло успешно
      */
@@ -158,13 +167,15 @@ public class IndustryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteCountry(@PathVariable("id") Integer industryId) {
+    public ResponseEntity<?> deleteCountry(@Parameter(description = "ID промышленности", required = true)
+                                           @PathVariable("id") Integer industryId) {
         industryService.deleteById(industryId);
         return ResponseEntity.ok().build();
     }
 
     /**
      * Обработчик 404 ошибки
+     *
      * @param e {@link IndustryNotFoundException класс исключения}
      * @return {@link ProblemDetail ответ} с деталями ошибки
      */

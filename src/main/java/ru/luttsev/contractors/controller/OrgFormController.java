@@ -1,6 +1,7 @@
 package ru.luttsev.contractors.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,6 +33,7 @@ import java.util.List;
 
 /**
  * Контроллер для работы с объектами форм организаций
+ *
  * @author Yuri Luttsev
  */
 @Tag(name = "orgform", description = "API для работы с формами организации")
@@ -46,6 +48,7 @@ public class OrgFormController {
 
     /**
      * Получение всех объектов форм организаций
+     *
      * @return список {@link OrgFormResponsePayload DTO} объектов форм организаций
      */
     @Operation(summary = "Получение списка всех форм организации")
@@ -73,6 +76,7 @@ public class OrgFormController {
 
     /**
      * Получение объекта формы организации по ID
+     *
      * @param orgFormId ID объекта формы организации
      * @return {@link OrgFormResponsePayload DTO} объекта формы организации
      */
@@ -101,14 +105,16 @@ public class OrgFormController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
-    public OrgFormResponsePayload getById(@PathVariable("id") Integer orgFormId) {
+    public OrgFormResponsePayload getById(@Parameter(description = "ID формы организации", required = true)
+                                          @PathVariable("id") Integer orgFormId) {
         return mapper.map(orgFormService.getById(orgFormId), OrgFormResponsePayload.class);
     }
 
     /**
      * Сохранение или обновление объекта формы организации
+     *
      * @param orgFormPayload {@link SaveOrUpdateOrgFormPayload запрос} на сохранение или обновление<br>
-     *                                                                объекта формы организации
+     *                       объекта формы организации
      * @return {@link OrgFormResponsePayload DTO} сохраненного или обновленного объекта формы организации
      */
     @Operation(summary = "Сохранение формы организации", description = "Сохранение формы организации с заранее указзаным ID" +
@@ -127,13 +133,16 @@ public class OrgFormController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
-    public OrgFormResponsePayload saveOrUpdate(@RequestBody SaveOrUpdateOrgFormPayload orgFormPayload) {
+    public OrgFormResponsePayload saveOrUpdate(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Форма организации для сохранения", required = true)
+            @RequestBody SaveOrUpdateOrgFormPayload orgFormPayload) {
         OrgForm entity = mapper.map(orgFormPayload, OrgForm.class);
         return mapper.map(orgFormService.saveOrUpdate(entity), OrgFormResponsePayload.class);
     }
 
     /**
      * Удаление объекта формы организации по ID
+     *
      * @param orgFormId ID объекта формы организации
      * @return ответ с кодом 200, если удаление прошло успешно
      */
@@ -156,13 +165,15 @@ public class OrgFormController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable("id") Integer orgFormId) {
+    public ResponseEntity<?> deleteById(@Parameter(description = "ID формы организации", required = true)
+                                        @PathVariable("id") Integer orgFormId) {
         orgFormService.deleteById(orgFormId);
         return ResponseEntity.ok().build();
     }
 
     /**
      * Обработчик 404 ошибки
+     *
      * @param e {@link OrgFormNotFoundException класс исключения}
      * @return {@link ProblemDetail ответ} с деталями ошибки
      */

@@ -1,6 +1,7 @@
 package ru.luttsev.contractors.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -106,7 +107,8 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
-    public ContractorResponsePayload getContractorById(@PathVariable("id") String contractorId) {
+    public ContractorResponsePayload getContractorById(@Parameter(description = "ID контрагента", required = true)
+                                                       @PathVariable("id") String contractorId) {
         return mapper.map(contractorService.getById(contractorId), ContractorResponsePayload.class);
     }
 
@@ -132,7 +134,9 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
-    public ContractorResponsePayload saveOrUpdateContractor(@RequestBody SaveOrUpdateContractorPayload contractorPayload) {
+    public ContractorResponsePayload saveOrUpdateContractor(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Контрактор для сохранения", required = true)
+            @RequestBody SaveOrUpdateContractorPayload contractorPayload) {
         Contractor savedContractor = contractorService.saveOrUpdate(mapper.map(contractorPayload, Contractor.class));
         return mapper.map(savedContractor, ContractorResponsePayload.class);
     }
@@ -162,7 +166,8 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteContractorById(@PathVariable("id") String contractorId) {
+    public ResponseEntity<?> deleteContractorById(@Parameter(description = "ID контрагента", required = true)
+                                                  @PathVariable("id") String contractorId) {
         contractorService.deleteById(contractorId);
         return ResponseEntity.ok().build();
     }
@@ -188,9 +193,10 @@ public class ContractorController {
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PostMapping("/search")
     public ContractorsPagePayload searchContractors(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Фильтры поиска контрагентов", required = true)
             @RequestBody ContractorFiltersPayload contractorFilters,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int contentSize) {
+            @Parameter(description = "Номер страницы", required = true) @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Количество элементов на странице", required = true) @RequestParam(defaultValue = "10") int contentSize) {
         return contractorService.getByFilters(contractorFilters, page, contentSize);
     }
 
@@ -214,9 +220,11 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PostMapping("/jdbc/search")
-    public ContractorsPagePayload searchContractorsJdbc(@RequestBody ContractorFiltersPayload contractorFilters,
-                                                        @RequestParam(defaultValue = "0", required = false) int page,
-                                                        @RequestParam(defaultValue = "10", required = false) int contentSize) {
+    public ContractorsPagePayload searchContractorsJdbc(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Фильтры поиска контрагентов", required = true)
+            @RequestBody ContractorFiltersPayload contractorFilters,
+            @Parameter(description = "Номер страницы", required = true) @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Количество элементов на странице", required = true) @RequestParam(defaultValue = "10") int contentSize) {
         return contractorService.getByFiltersJdbc(contractorFilters, page, contentSize);
     }
 
