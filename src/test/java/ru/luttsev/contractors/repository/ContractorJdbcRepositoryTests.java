@@ -29,8 +29,7 @@ public class ContractorJdbcRepositoryTests {
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15")
             .withDatabaseName("contractors")
             .withUsername("postgres")
-            .withPassword("postgres")
-            .withInitScript("sql/init.sql");
+            .withPassword("postgres");
 
     @Autowired
     private ContractorJdbcRepository contractorJdbcRepository;

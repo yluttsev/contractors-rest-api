@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContractorJdbcRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     private static final String BASE_QUERY = """
             select c.id as c_id, c.parent_id as c_parent_id, c.name as c_name, c.name_full as c_name_full, c.inn as c_inn,
@@ -44,38 +45,50 @@ public class ContractorJdbcRepository {
      */
     public Page<Contractor> getContractorsByFilters(ContractorFiltersPayload filters, int page, int contentSize) {
         StringBuilder query = new StringBuilder(BASE_QUERY);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         if (filters.getId() != null) {
-            query.append(" and c.id = '").append(filters.getId()).append("'");
+            query.append(" and c.id = :c_id");
+            parameters.addValue("c_id", filters.getId());
         }
         if (filters.getParentId() != null) {
-            query.append(" and c.parent_id = '").append(filters.getParentId()).append("'");
+            query.append(" and c.parent_id = :c_parent_id");
+            parameters.addValue("c_parent_id", filters.getParentId());
         }
         if (filters.getName() != null) {
-            query.append(" and c.name like '%").append(filters.getName()).append("%'");
+            query.append(" and c.name like :c_name");
+            parameters.addValue("c_name", "%" + filters.getName() + "%");
         }
         if (filters.getFullName() != null) {
-            query.append(" and c.name_full like '%").append(filters.getFullName()).append("%'");
+            query.append(" and c.name_full like :c_name_full");
+            parameters.addValue("c_name_full", "%" + filters.getFullName() + "%");
         }
         if (filters.getInn() != null) {
-            query.append(" and c.inn like '%").append(filters.getInn()).append("%'");
+            query.append(" and c.inn like :c_inn");
+            parameters.addValue("c_inn", "%" + filters.getInn() + "%");
         }
         if (filters.getOgrn() != null) {
-            query.append(" and c.ogrn like '%").append(filters.getOgrn()).append("%'");
+            query.append(" and c.ogrn like :c_ogrn");
+            parameters.addValue("c_ogrn", "%" + filters.getOgrn() + "%");
         }
         if (filters.getCountryName() != null) {
-            query.append(" and cn.name like '%").append(filters.getCountryName()).append("%'");
+            query.append(" and cn.name like :cn_name");
+            parameters.addValue("cn_name", "%" + filters.getCountryName() + "%");
         }
         if (filters.getIndustry() != null) {
-            query.append(" and i.id = '").append(filters.getIndustry().getId()).append("'")
-                    .append(" and i.name = '").append(filters.getIndustry().getName()).append("'");
+            query.append(" and i.id = :i_id").append(" and i.name = :i_name");
+            parameters.addValue("i_id", filters.getIndustry().getId());
+            parameters.addValue("i_name", filters.getIndustry().getName());
         }
         if (filters.getOrgFormName() != null) {
-            query.append(" and of.name like '%").append(filters.getOrgFormName()).append("%'");
+            query.append(" and of.name like :of_name");
+            parameters.addValue("of_name", "%" + filters.getOrgFormName() + "%");
         }
 
-        query.append(" limit ").append(contentSize).append(" offset ").append(page * contentSize);
-        List<Contractor> contractors = jdbcTemplate.query(query.toString(), new ContractorRowMapper());
+        query.append(" limit :limit").append(" offset :offset");
+        parameters.addValue("limit", contentSize);
+        parameters.addValue("offset", page * contentSize);
+        List<Contractor> contractors = jdbcTemplate.query(query.toString(), parameters, new ContractorRowMapper());
 
         return new PageImpl<>(contractors, Pageable.ofSize(contentSize), contractors.size());
     }
