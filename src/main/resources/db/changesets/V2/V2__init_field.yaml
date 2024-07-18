@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8
+      author: yluttsev
+      changes:
+        - addColumn:
+            tableName: contractor
+            columns:
+              name: active_main_borrower
+              type: boolean
+              defaultValueBoolean: false
+              constraints:
+                nullable: false
