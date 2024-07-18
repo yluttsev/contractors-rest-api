@@ -29,4 +29,6 @@ public interface ContractorService extends CrudService<Contractor, String> {
      */
     ContractorsPagePayload getByFiltersJdbc(ContractorFiltersPayload filters, int page, int contentSize);
 
+    Contractor setMainBorrower(String contractorId, boolean isMainBorrower);
+
 }

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,6 +30,7 @@ import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
 import ru.luttsev.contractors.payload.contractor.ContractorResponsePayload;
 import ru.luttsev.contractors.payload.contractor.ContractorsPagePayload;
 import ru.luttsev.contractors.payload.contractor.SaveOrUpdateContractorPayload;
+import ru.luttsev.contractors.payload.contractor.SetMainBorrowerPayload;
 import ru.luttsev.contractors.service.contractor.ContractorService;
 import ru.luttsev.springbootstarterauditlib.LogLevel;
 import ru.luttsev.springbootstarterauditlib.annotation.WebAuditLog;
@@ -226,6 +228,12 @@ public class ContractorController {
             @Parameter(description = "Номер страницы", required = true) @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Количество элементов на странице", required = true) @RequestParam(defaultValue = "10") int contentSize) {
         return contractorService.getByFiltersJdbc(contractorFilters, page, contentSize);
+    }
+
+    @PatchMapping("/main-borrower")
+    public ContractorResponsePayload setMainBorrower(@RequestBody SetMainBorrowerPayload payload) {
+        Contractor contractor = contractorService.setMainBorrower(payload.getContractorId(), payload.isMainBorrower());
+        return mapper.map(contractor, ContractorResponsePayload.class);
     }
 
     /**

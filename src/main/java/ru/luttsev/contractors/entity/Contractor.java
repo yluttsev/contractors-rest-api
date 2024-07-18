@@ -92,4 +92,7 @@ public class Contractor {
     @Builder.Default
     private Boolean isActive = true;
 
+    @Column(name = "active_main_borrower", nullable = false)
+    private boolean activeMainBorrower = false;
+
 }
