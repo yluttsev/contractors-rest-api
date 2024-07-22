@@ -48,9 +48,9 @@ databaseChangeLog:
               - column:
                   name: is_active
                   type: boolean
+                  defaultValueBoolean: true
                   constraints:
                     nullable: false
-                    defaultValueBoolean: true
 
   - changeSet:
       id: 3

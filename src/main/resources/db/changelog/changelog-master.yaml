@@ -1,5 +1,3 @@
 databaseChangeLog:
-  - include:
-      file: /db/changesets/V1__init_tables.yaml
-  - include:
-      file: /db/changesets/V1__insert_data.sql
+  - includeAll:
+      path: /db/changesets

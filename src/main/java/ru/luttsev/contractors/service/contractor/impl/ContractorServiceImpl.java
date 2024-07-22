@@ -119,4 +119,12 @@ public class ContractorServiceImpl implements ContractorService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public Contractor setMainBorrower(String contractorId, boolean isMainBorrower) {
+        Contractor contractor = this.getById(contractorId);
+        contractor.setActiveMainBorrower(isMainBorrower);
+        return this.saveOrUpdate(contractor);
+    }
+
 }

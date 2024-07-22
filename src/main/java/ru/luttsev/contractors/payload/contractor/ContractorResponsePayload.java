@@ -51,4 +51,7 @@ public class ContractorResponsePayload {
     @JsonProperty("org_form")
     private OrgFormResponsePayload orgForm;
 
+    @JsonProperty("active_main_borrower")
+    private boolean activeMainBorrower;
+
 }
