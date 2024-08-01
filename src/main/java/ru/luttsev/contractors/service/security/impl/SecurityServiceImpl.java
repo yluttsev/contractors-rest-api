@@ -13,14 +13,14 @@ import java.util.Optional;
 @Service
 public class SecurityServiceImpl implements SecurityService {
 
-    private boolean checkRole(String role, Collection<? extends GrantedAuthority> roles) {
-        return roles.contains(new SimpleGrantedAuthority(role));
+    private boolean containsRole(String role, Collection<? extends GrantedAuthority> roles) {
+        return !roles.contains(new SimpleGrantedAuthority(role));
     }
 
     @Override
-    public ContractorFiltersPayload updateFiltersWithRole(ContractorFiltersPayload filters, UserDetails userDetails) {
+    public void updateFiltersWithRole(ContractorFiltersPayload filters, UserDetails userDetails) {
         Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
-        if (!this.checkRole("CONTRACTOR_SUPERUSER", roles) || !this.checkRole("SUPERUSER", roles)) {
+        if (this.containsRole("CONTRACTOR_SUPERUSER", roles) || this.containsRole("SUPERUSER", roles)) {
             if (Optional.ofNullable(filters.getCountryName()).isEmpty()) {
                 filters.setCountryName("Российская Федерация");
             } else {
@@ -29,7 +29,6 @@ public class SecurityServiceImpl implements SecurityService {
                 }
             }
         }
-        return filters;
     }
 
 }
