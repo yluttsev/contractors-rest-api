@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.luttsev.contractors.entity.OrgForm;
 import ru.luttsev.contractors.exception.OrgFormNotFoundException;
@@ -29,8 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@WithMockUser(roles = {"USER" ,"SUPERUSER"})
 @AutoConfigureMockMvc
-public class OrgFormControllerTests {
+class OrgFormControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,7 +56,7 @@ public class OrgFormControllerTests {
 
     @Test
     @DisplayName("Получение всех объектов OrgForm")
-    public void testGetAllOrgForms() throws Exception {
+    void testGetAllOrgForms() throws Exception {
         when(orgFormService.getAll()).thenReturn(createOrgForms());
 
         mockMvc.perform(get("/orgform/all"))
@@ -72,7 +74,7 @@ public class OrgFormControllerTests {
 
     @Test
     @DisplayName("Успешное получение объекта OrgForm по ID")
-    public void testSuccessGetOrgFormById() throws Exception {
+    void testSuccessGetOrgFormById() throws Exception {
         List<OrgForm> orgForms = createOrgForms();
 
         when(orgFormService.getById(orgForms.get(0).getId())).thenReturn(orgForms.get(0));
@@ -91,7 +93,7 @@ public class OrgFormControllerTests {
 
     @Test
     @DisplayName("Неудачное получение объекта OrgForm по ID")
-    public void testFailGetOrgFormById() throws Exception {
+    void testFailGetOrgFormById() throws Exception {
         Integer invalidId = -1;
 
         when(orgFormService.getById(invalidId)).thenThrow(new OrgFormNotFoundException(invalidId));
@@ -106,7 +108,7 @@ public class OrgFormControllerTests {
 
     @Test
     @DisplayName("Создание нового объекта OrgForm")
-    public void testCreateNewOrgForm() throws Exception {
+    void testCreateNewOrgForm() throws Exception {
         OrgForm orgForm = createOrgForms().get(0);
         orgForm.setIsActive(null);
         SaveOrUpdateOrgFormPayload orgFormPayload = mapper.map(orgForm, SaveOrUpdateOrgFormPayload.class);
@@ -126,7 +128,7 @@ public class OrgFormControllerTests {
 
     @Test
     @DisplayName("Удаление объекта OrgForm по ID")
-    public void testDeleteOrgFormById() throws Exception {
+    void testDeleteOrgFormById() throws Exception {
         OrgForm orgForm = createOrgForms().get(0);
 
         doNothing().when(orgFormService).deleteById(orgForm.getId());
