@@ -5,6 +5,6 @@ import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
 
 public interface SecurityService {
 
-    ContractorFiltersPayload updateFiltersWithRole(ContractorFiltersPayload filters, UserDetails userDetails);
+    void updateFiltersWithRole(ContractorFiltersPayload filters, UserDetails userDetails);
 
 }
