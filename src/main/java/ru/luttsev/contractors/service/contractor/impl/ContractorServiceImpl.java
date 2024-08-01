@@ -6,6 +6,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.exception.ContractorNotFoundException;
@@ -16,6 +18,7 @@ import ru.luttsev.contractors.payload.contractor.ContractorsPagePayload;
 import ru.luttsev.contractors.repository.ContractorRepository;
 import ru.luttsev.contractors.repository.jdbc.ContractorJdbcRepository;
 import ru.luttsev.contractors.service.contractor.ContractorService;
+import ru.luttsev.contractors.service.security.SecurityService;
 
 import java.util.List;
 
@@ -26,11 +29,14 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@PreAuthorize("!hasRole('ADMIN')")
 public class ContractorServiceImpl implements ContractorService {
 
     private final ContractorRepository contractorRepository;
 
     private final ContractorJdbcRepository contractorJdbcRepository;
+
+    private final SecurityService securityService;
 
     private final ModelMapper mapper;
 
@@ -65,6 +71,7 @@ public class ContractorServiceImpl implements ContractorService {
      */
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public Contractor saveOrUpdate(Contractor contractor) {
         return contractorRepository.save(contractor);
     }
@@ -76,6 +83,7 @@ public class ContractorServiceImpl implements ContractorService {
      */
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public void deleteById(String id) {
         if (contractorRepository.existsById(id)) {
             contractorRepository.deleteById(id);
@@ -125,6 +133,20 @@ public class ContractorServiceImpl implements ContractorService {
         Contractor contractor = this.getById(contractorId);
         contractor.setActiveMainBorrower(isMainBorrower);
         return this.saveOrUpdate(contractor);
+    }
+
+    @Override
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER', 'CONTRACTOR_RUS')")
+    public ContractorsPagePayload getByFiltersJdbcWithCheckRole(ContractorFiltersPayload filters, int page, int contentSize, UserDetails userDetails) {
+        securityService.updateFiltersWithRole(filters, userDetails);
+        return this.getByFiltersJdbc(filters, page, contentSize);
+    }
+
+    @Override
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER', 'CONTRACTOR_RUS')")
+    public ContractorsPagePayload getByFiltersWithCheckRole(ContractorFiltersPayload filters, int page, int contentSize, UserDetails userDetails) {
+        securityService.updateFiltersWithRole(filters, userDetails);
+        return this.getByFilters(filters, page, contentSize);
     }
 
 }

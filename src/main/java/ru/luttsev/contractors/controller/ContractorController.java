@@ -13,6 +13,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -168,8 +170,8 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteContractorById(@Parameter(description = "ID контрагента", required = true)
-                                                  @PathVariable("id") String contractorId) {
+    public ResponseEntity<Void> deleteContractorById(@Parameter(description = "ID контрагента", required = true)
+                                                     @PathVariable("id") String contractorId) {
         contractorService.deleteById(contractorId);
         return ResponseEntity.ok().build();
     }
@@ -198,8 +200,9 @@ public class ContractorController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Фильтры поиска контрагентов", required = true)
             @RequestBody ContractorFiltersPayload contractorFilters,
             @Parameter(description = "Номер страницы", required = true) @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Количество элементов на странице", required = true) @RequestParam(defaultValue = "10") int contentSize) {
-        return contractorService.getByFilters(contractorFilters, page, contentSize);
+            @Parameter(description = "Количество элементов на странице", required = true) @RequestParam(defaultValue = "10") int contentSize,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return contractorService.getByFiltersWithCheckRole(contractorFilters, page, contentSize, userDetails);
     }
 
     /**
@@ -226,8 +229,9 @@ public class ContractorController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Фильтры поиска контрагентов", required = true)
             @RequestBody ContractorFiltersPayload contractorFilters,
             @Parameter(description = "Номер страницы", required = true) @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Количество элементов на странице", required = true) @RequestParam(defaultValue = "10") int contentSize) {
-        return contractorService.getByFiltersJdbc(contractorFilters, page, contentSize);
+            @Parameter(description = "Количество элементов на странице", required = true) @RequestParam(defaultValue = "10") int contentSize,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return contractorService.getByFiltersJdbcWithCheckRole(contractorFilters, page, contentSize, userDetails);
     }
 
     @PatchMapping("/main-borrower")

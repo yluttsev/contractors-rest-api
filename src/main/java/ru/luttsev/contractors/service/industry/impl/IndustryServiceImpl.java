@@ -2,6 +2,7 @@ package ru.luttsev.contractors.service.industry.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.Industry;
 import ru.luttsev.contractors.exception.IndustryNotFoundException;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@PreAuthorize("!hasRole('ADMIN')")
 public class IndustryServiceImpl implements IndustryService {
 
     private final IndustryRepository industryRepository;
@@ -48,6 +50,7 @@ public class IndustryServiceImpl implements IndustryService {
      */
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public Industry saveOrUpdate(Industry industry) {
         return industryRepository.save(industry);
     }
@@ -58,6 +61,7 @@ public class IndustryServiceImpl implements IndustryService {
      */
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public void deleteById(Integer id) {
         if (industryRepository.existsById(id)) {
             industryRepository.deleteById(id);

@@ -2,6 +2,7 @@ package ru.luttsev.contractors.service.orgform.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.OrgForm;
 import ru.luttsev.contractors.exception.OrgFormNotFoundException;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@PreAuthorize("!hasRole('ADMIN')")
 public class OrgFormServiceImpl implements OrgFormService {
 
     private final OrgFormRepository orgFormRepository;
@@ -48,6 +50,7 @@ public class OrgFormServiceImpl implements OrgFormService {
      */
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public OrgForm saveOrUpdate(OrgForm orgForm) {
         return orgFormRepository.save(orgForm);
     }
@@ -58,6 +61,7 @@ public class OrgFormServiceImpl implements OrgFormService {
      */
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public void deleteById(Integer id) {
         if (orgFormRepository.existsById(id)) {
             orgFormRepository.deleteById(id);
