@@ -7,6 +7,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.luttsev.contractors.service.contractor.ContractorService;
 import ru.luttsev.contractors.service.country.CountryService;
 import ru.luttsev.contractors.service.industry.IndustryService;
+import ru.luttsev.contractors.service.jwt.JwtService;
 import ru.luttsev.contractors.service.orgform.OrgFormService;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -15,7 +16,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class ExceptionTests {
+class ExceptionTests {
 
     @MockBean
     private OrgFormService orgFormService;
@@ -29,9 +30,12 @@ public class ExceptionTests {
     @MockBean
     private ContractorService contractorService;
 
+    @MockBean
+    private JwtService jwtService;
+
     @Test
     @DisplayName("Выбрасывание исключения OrgFormNotFoundException")
-    public void testOrgFormNotFoundExceptionThrowing() {
+    void testOrgFormNotFoundExceptionThrowing() {
         Integer invalidId = -1;
         when(orgFormService.getById(invalidId)).thenThrow(new OrgFormNotFoundException(invalidId));
         doThrow(new OrgFormNotFoundException(invalidId)).when(orgFormService).deleteById(invalidId);
@@ -44,7 +48,7 @@ public class ExceptionTests {
 
     @Test
     @DisplayName("Выбрасывание исключения IndustryNotFoundException")
-    public void testIndustryNotFoundExceptionThrowing() {
+    void testIndustryNotFoundExceptionThrowing() {
         Integer invalidId = -1;
         when(industryService.getById(invalidId)).thenThrow(new IndustryNotFoundException(invalidId));
         doThrow(new IndustryNotFoundException(invalidId)).when(industryService).deleteById(invalidId);
@@ -57,7 +61,7 @@ public class ExceptionTests {
 
     @Test
     @DisplayName("Выбрасывание исключения CountryNotFoundException")
-    public void testCountryNotFoundExceptionThrowing() {
+    void testCountryNotFoundExceptionThrowing() {
         String invalidId = "invalidId";
         when(countryService.getById(invalidId)).thenThrow(new CountryNotFoundException(invalidId));
         doThrow(new CountryNotFoundException(invalidId)).when(countryService).deleteById(invalidId);
@@ -70,7 +74,7 @@ public class ExceptionTests {
 
     @Test
     @DisplayName("Выбрасывание исключения ContractorNotFoundException")
-    public void testContractorNotFoundExceptionThrowing() {
+    void testContractorNotFoundExceptionThrowing() {
         String invalidId = "invalidId";
         when(contractorService.getById(invalidId)).thenThrow(new ContractorNotFoundException(invalidId));
         doThrow(new ContractorNotFoundException(invalidId)).when(contractorService).deleteById(invalidId);
