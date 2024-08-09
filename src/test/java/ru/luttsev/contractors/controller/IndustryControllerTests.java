@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.luttsev.contractors.entity.Industry;
 import ru.luttsev.contractors.exception.IndustryNotFoundException;
@@ -29,8 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@WithMockUser(roles = {"USER" ,"SUPERUSER"})
 @AutoConfigureMockMvc
-public class IndustryControllerTests {
+class IndustryControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,7 +56,7 @@ public class IndustryControllerTests {
 
     @Test
     @DisplayName("Получение всех объектов промышленности")
-    public void testGetAllIndustries() throws Exception {
+    void testGetAllIndustries() throws Exception {
         Industry it = createItIndustry();
         Industry fly = createFlyIndustry();
 
@@ -74,7 +76,7 @@ public class IndustryControllerTests {
 
     @Test
     @DisplayName("Успешное получение объекта промышленности по ID")
-    public void testSuccessGetIndustryById() throws Exception {
+    void testSuccessGetIndustryById() throws Exception {
         Industry it = createItIndustry();
 
         when(industryService.getById(it.getId())).thenReturn(it);
@@ -90,7 +92,7 @@ public class IndustryControllerTests {
 
     @Test
     @DisplayName("Неуспешное получение объекта промышленности по ID")
-    public void testFailGetIndustryById() throws Exception {
+    void testFailGetIndustryById() throws Exception {
         Integer invalidId = -1;
 
         when(industryService.getById(invalidId)).thenThrow(new IndustryNotFoundException(invalidId));
@@ -105,7 +107,7 @@ public class IndustryControllerTests {
 
     @Test
     @DisplayName("Создание нового объекта промышленности")
-    public void testCreateNewIndustry() throws Exception {
+    void testCreateNewIndustry() throws Exception {
         Industry it = createItIndustry();
         it.setIsActive(null);
         SaveOrUpdateIndustryPayload industryPayload = mapper.map(it, SaveOrUpdateIndustryPayload.class);
@@ -126,7 +128,7 @@ public class IndustryControllerTests {
 
     @Test
     @DisplayName("Удаление объекта промышленности по ID")
-    public void testDeleteIndustryById() throws Exception {
+    void testDeleteIndustryById() throws Exception {
         Industry it = createItIndustry();
 
         doNothing().when(industryService).deleteById(it.getId());

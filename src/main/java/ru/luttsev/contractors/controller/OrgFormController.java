@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/orgform")
 @RequiredArgsConstructor
+@PreAuthorize("!hasRole('ADMIN')")
 public class OrgFormController {
 
     private final OrgFormService orgFormService;
@@ -68,6 +70,7 @@ public class OrgFormController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/all")
+    @PreAuthorize("hasRole('USER')")
     public List<OrgFormResponsePayload> getAll() {
         return orgFormService.getAll().stream()
                 .map(orgForm -> mapper.map(orgForm, OrgFormResponsePayload.class))
@@ -105,6 +108,7 @@ public class OrgFormController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public OrgFormResponsePayload getById(@Parameter(description = "ID формы организации", required = true)
                                           @PathVariable("id") Integer orgFormId) {
         return mapper.map(orgFormService.getById(orgFormId), OrgFormResponsePayload.class);
@@ -133,6 +137,7 @@ public class OrgFormController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public OrgFormResponsePayload saveOrUpdate(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Форма организации для сохранения", required = true)
             @RequestBody SaveOrUpdateOrgFormPayload orgFormPayload) {
@@ -165,6 +170,7 @@ public class OrgFormController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<?> deleteById(@Parameter(description = "ID формы организации", required = true)
                                         @PathVariable("id") Integer orgFormId) {
         orgFormService.deleteById(orgFormId);

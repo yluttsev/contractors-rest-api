@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.entity.Country;
@@ -35,8 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@WithMockUser(roles = {"USER", "SUPERUSER"})
 @AutoConfigureMockMvc
-public class ContractorControllerTests {
+class ContractorControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -66,7 +68,7 @@ public class ContractorControllerTests {
 
     @Test
     @DisplayName("Получение всех объектов Contractor")
-    public void testGetAllContractors() throws Exception {
+    void testGetAllContractors() throws Exception {
         List<Contractor> contractors = List.of(
                 createContractor("1", "Contractor 1"),
                 createContractor("2", "Contractor 2"),
@@ -89,7 +91,7 @@ public class ContractorControllerTests {
 
     @Test
     @DisplayName("Успешное получение объекта Contractor по ID")
-    public void testSuccessGetContractorById() throws Exception {
+    void testSuccessGetContractorById() throws Exception {
         Contractor contractor = createContractor("1", "Contractor 1");
         when(contractorService.getById(contractor.getId())).thenReturn(contractor);
 
@@ -106,7 +108,7 @@ public class ContractorControllerTests {
 
     @Test
     @DisplayName("Неудачное получение объекта Contractor по ID")
-    public void testFailGetContractorById() throws Exception {
+    void testFailGetContractorById() throws Exception {
         String invalidId = "invalidId";
         when(contractorService.getById(invalidId)).thenThrow(new ContractorNotFoundException(invalidId));
 
@@ -124,7 +126,7 @@ public class ContractorControllerTests {
 
     @Test
     @DisplayName("Создание нового объекта Contractor")
-    public void testCreateNewContractor() throws Exception {
+    void testCreateNewContractor() throws Exception {
         Contractor contractor = createContractor("1", "Contractor 1");
         SaveOrUpdateContractorPayload contractorPayload = mapper.map(contractor,
                 SaveOrUpdateContractorPayload.class);
@@ -146,7 +148,7 @@ public class ContractorControllerTests {
 
     @Test
     @DisplayName("Удаление объекта Contractor по ID")
-    public void testDeleteContractorById() throws Exception {
+    void testDeleteContractorById() throws Exception {
         Contractor contractor = createContractor("1", "Contractor 1");
         doNothing().when(contractorService).deleteById(contractor.getId());
 
@@ -157,7 +159,7 @@ public class ContractorControllerTests {
 
     @Test
     @DisplayName("Установка значения 'activeMainBorrower' для контрагента")
-    public void testSetMainBorrowerToContractor() throws Exception {
+    void testSetMainBorrowerToContractor() throws Exception {
         Contractor contractor = createContractor("test", "TestContractor");
         contractor.setActiveMainBorrower(true);
         when(contractorService.setMainBorrower(contractor.getId(), true)).thenReturn(contractor);
@@ -168,8 +170,8 @@ public class ContractorControllerTests {
                 .build();
 
         mockMvc.perform(patch("/contractor/main-borrower")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(payload)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(payload)))
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),

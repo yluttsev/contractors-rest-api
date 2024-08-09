@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/country")
+@PreAuthorize("!hasRole('ADMIN')")
 public class CountryController {
 
     private final CountryService countryService;
@@ -69,6 +71,7 @@ public class CountryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/all")
+    @PreAuthorize("hasRole('USER')")
     public List<CountryResponsePayload> getAllCountries() {
         return countryService.getAll().stream()
                 .map(country -> mapper.map(country, CountryResponsePayload.class))
@@ -106,6 +109,7 @@ public class CountryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public CountryResponsePayload getCountryById(@Parameter(description = "ID страны", required = true)
                                                  @PathVariable("id") String countryId) {
         Country country = countryService.getById(countryId);
@@ -134,6 +138,7 @@ public class CountryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public CountryResponsePayload saveOrUpdateCountry(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Страна для сохранения", required = true)
             @RequestBody SaveOrUpdateCountryPayload saveOrUpdateCountryPayload) {
@@ -167,6 +172,7 @@ public class CountryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<?> deleteCountry(@Parameter(description = "ID страны")
                                            @PathVariable("id") String countryId) {
         countryService.deleteById(countryId);

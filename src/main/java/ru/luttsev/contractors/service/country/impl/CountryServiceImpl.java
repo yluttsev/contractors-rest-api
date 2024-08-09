@@ -2,6 +2,7 @@ package ru.luttsev.contractors.service.country.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.exception.CountryNotFoundException;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@PreAuthorize("!hasRole('ADMIN')")
 public class CountryServiceImpl implements CountryService {
 
     private final CountryRepository countryRepository;
@@ -48,6 +50,7 @@ public class CountryServiceImpl implements CountryService {
      */
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public Country saveOrUpdate(Country country) {
         return countryRepository.save(country);
     }
@@ -58,6 +61,7 @@ public class CountryServiceImpl implements CountryService {
      */
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public void deleteById(String id) {
         if (countryRepository.existsById(id)) {
             countryRepository.deleteById(id);

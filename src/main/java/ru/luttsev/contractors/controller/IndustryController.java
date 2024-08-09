@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/industry")
+@PreAuthorize("!hasRole('ADMIN')")
 public class IndustryController {
 
     private final IndustryService industryService;
@@ -68,6 +70,7 @@ public class IndustryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/all")
+    @PreAuthorize("hasRole('USER')")
     public List<IndustryResponsePayload> getAllIndustries() {
         return industryService.getAll().stream()
                 .map(industry -> mapper.map(industry, IndustryResponsePayload.class))
@@ -105,6 +108,7 @@ public class IndustryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public IndustryResponsePayload getIndustryById(@Parameter(description = "ID промышленности", required = true)
                                                    @PathVariable("id") Integer id) {
         Industry industry = industryService.getById(id);
@@ -134,6 +138,7 @@ public class IndustryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public IndustryResponsePayload saveOrUpdateIndustry(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Промышленность для сохранения", required = true)
             @RequestBody SaveOrUpdateIndustryPayload saveOrUpdateIndustryPayload) {
@@ -167,6 +172,7 @@ public class IndustryController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<?> deleteCountry(@Parameter(description = "ID промышленности", required = true)
                                            @PathVariable("id") Integer industryId) {
         industryService.deleteById(industryId);

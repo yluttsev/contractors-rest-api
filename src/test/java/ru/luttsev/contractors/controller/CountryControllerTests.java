@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.exception.CountryNotFoundException;
@@ -29,8 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@WithMockUser(roles = {"USER" ,"SUPERUSER"})
 @AutoConfigureMockMvc
-public class CountryControllerTests {
+class CountryControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,7 +56,7 @@ public class CountryControllerTests {
 
     @Test
     @DisplayName(value = "Получение всех стран")
-    public void testGetAllCountries() throws Exception {
+    void testGetAllCountries() throws Exception {
         Country russia = createRussia();
         Country england = createEngland();
 
@@ -72,7 +74,7 @@ public class CountryControllerTests {
 
     @Test
     @DisplayName("Успешное получение страны по ID")
-    public void testSuccessGetCountryById() throws Exception {
+    void testSuccessGetCountryById() throws Exception {
         Country expectedCountry = createRussia();
         when(countryService.getById(expectedCountry.getId())).thenReturn(expectedCountry);
 
@@ -87,7 +89,7 @@ public class CountryControllerTests {
 
     @Test
     @DisplayName("Неуспешное получение страны по ID")
-    public void testFailGetCountryById() throws Exception {
+    void testFailGetCountryById() throws Exception {
         String invalidId = "Invalid_ID";
         when(countryService.getById(invalidId)).thenThrow(new CountryNotFoundException(invalidId));
 
@@ -101,7 +103,7 @@ public class CountryControllerTests {
 
     @Test
     @DisplayName("Создание новой страны")
-    public void testCreateNewCountry() throws Exception {
+    void testCreateNewCountry() throws Exception {
         Country russia = createRussia();
         russia.setIsActive(null);
         SaveOrUpdateCountryPayload countryPayload = mapper.map(russia, SaveOrUpdateCountryPayload.class);
@@ -120,7 +122,7 @@ public class CountryControllerTests {
 
     @Test
     @DisplayName("Удаление страны по ID")
-    public void testSuccessDeleteCountryById() throws Exception {
+    void testSuccessDeleteCountryById() throws Exception {
         Country russia = createRussia();
         doNothing().when(countryService).deleteById(russia.getId());
 
