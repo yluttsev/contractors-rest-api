@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
+import ru.luttsev.contractors.PostgresContainer;
 import ru.luttsev.contractors.entity.Country;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,8 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
+@Import(PostgresContainer.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class CountryRepositoryTests {
+class CountryRepositoryTests {
 
     @Autowired
     private CountryRepository countryRepository;
@@ -24,7 +27,7 @@ public class CountryRepositoryTests {
 
     @Test
     @DisplayName("Поиск объекта Country по ID")
-    public void testFindCountryById() {
+    void testFindCountryById() {
         Country country = new Country("1", "Country 1", true);
         testEntityManager.merge(country);
         assertTrue(countryRepository.findById(country.getId()).isPresent());
@@ -32,7 +35,7 @@ public class CountryRepositoryTests {
 
     @Test
     @DisplayName("Сохранение объекта Country")
-    public void testSaveCountry() {
+    void testSaveCountry() {
         Country country = new Country("1", "Country 1", true);
         Country savedCountry = countryRepository.save(country);
         assertEquals(testEntityManager.find(Country.class, country.getId()), savedCountry);
@@ -40,7 +43,7 @@ public class CountryRepositoryTests {
 
     @Test
     @DisplayName("Обновление объекта Country")
-    public void testUpdateCountry() {
+    void testUpdateCountry() {
         Country country = new Country("1", "Country 1", true);
         testEntityManager.merge(country);
         country.setName("Country 2");
@@ -50,7 +53,7 @@ public class CountryRepositoryTests {
 
     @Test
     @DisplayName("Удаление объекта Country по ID")
-    public void testDeleteCountryById() {
+    void testDeleteCountryById() {
         Country country = new Country("1", "Country 1", true);
         testEntityManager.merge(country);
         countryRepository.deleteById(country.getId());

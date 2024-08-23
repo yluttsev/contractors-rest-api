@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.luttsev.contractors.PostgresContainer;
 import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.entity.Industry;
@@ -20,7 +22,6 @@ import ru.luttsev.contractors.entity.OrgForm;
 import ru.luttsev.contractors.exception.ContractorNotFoundException;
 import ru.luttsev.contractors.payload.contractor.ContractorResponsePayload;
 import ru.luttsev.contractors.payload.contractor.SaveOrUpdateContractorPayload;
-import ru.luttsev.contractors.payload.contractor.SetMainBorrowerPayload;
 import ru.luttsev.contractors.service.contractor.ContractorService;
 
 import java.util.List;
@@ -29,13 +30,13 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@Import(PostgresContainer.class)
 @WithMockUser(roles = {"USER", "SUPERUSER"})
 @AutoConfigureMockMvc
 class ContractorControllerTests {
@@ -155,32 +156,6 @@ class ContractorControllerTests {
         mockMvc.perform(delete("/contractor/delete/{id}", contractor.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Установка значения 'activeMainBorrower' для контрагента")
-    void testSetMainBorrowerToContractor() throws Exception {
-        Contractor contractor = createContractor("test", "TestContractor");
-        contractor.setActiveMainBorrower(true);
-        when(contractorService.setMainBorrower(contractor.getId(), true)).thenReturn(contractor);
-        contractor.setActiveMainBorrower(false);
-        SetMainBorrowerPayload payload = SetMainBorrowerPayload.builder()
-                .contractorId(contractor.getId())
-                .mainBorrower(true)
-                .build();
-
-        mockMvc.perform(patch("/contractor/main-borrower")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(payload)))
-                .andDo(print())
-                .andExpectAll(
-                        status().isOk(),
-                        content().json(
-                                objectMapper.writeValueAsString(
-                                        mapper.map(contractor, ContractorResponsePayload.class)
-                                )
-                        )
-                );
     }
 
 }

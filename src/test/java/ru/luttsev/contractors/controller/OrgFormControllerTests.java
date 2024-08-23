@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.luttsev.contractors.PostgresContainer;
 import ru.luttsev.contractors.entity.OrgForm;
 import ru.luttsev.contractors.exception.OrgFormNotFoundException;
 import ru.luttsev.contractors.payload.orgform.OrgFormResponsePayload;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@Import(PostgresContainer.class)
 @WithMockUser(roles = {"USER" ,"SUPERUSER"})
 @AutoConfigureMockMvc
 class OrgFormControllerTests {

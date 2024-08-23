@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
+import ru.luttsev.contractors.PostgresContainer;
 import ru.luttsev.contractors.entity.OrgForm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,8 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
+@Import(PostgresContainer.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class OrgFormRepositoryTests {
+class OrgFormRepositoryTests {
 
     @Autowired
     private OrgFormRepository orgFormRepository;
@@ -24,7 +27,7 @@ public class OrgFormRepositoryTests {
 
     @Test
     @DisplayName("Поиск объекта OrgForm по ID")
-    public void testFindOrgFormById() {
+    void testFindOrgFormById() {
         OrgForm orgForm = new OrgForm(1, "OrgForm 1", true);
         testEntityManager.merge(orgForm);
         assertTrue(orgFormRepository.findById(orgForm.getId()).isPresent());
@@ -32,7 +35,7 @@ public class OrgFormRepositoryTests {
 
     @Test
     @DisplayName("Сохранение объекта OrgForm")
-    public void testSaveOrgForm() {
+    void testSaveOrgForm() {
         OrgForm orgForm = new OrgForm(1, "OrgForm 1", true);
         OrgForm savedOrgForm = orgFormRepository.save(orgForm);
         assertEquals(testEntityManager.find(OrgForm.class, orgForm.getId()), savedOrgForm);
@@ -40,7 +43,7 @@ public class OrgFormRepositoryTests {
 
     @Test
     @DisplayName("Обновление объекта OrgForm")
-    public void testUpdateOrgForm() {
+    void testUpdateOrgForm() {
         OrgForm orgForm = new OrgForm(1, "OrgForm 1", true);
         testEntityManager.merge(orgForm);
         orgForm.setName("OrgForm 2");
@@ -50,7 +53,7 @@ public class OrgFormRepositoryTests {
 
     @Test
     @DisplayName("Удаление объекта OrgForm по ID")
-    public void testDeleteOrgFormById() {
+    void testDeleteOrgFormById() {
         OrgForm orgForm = new OrgForm(1, "OrgForm 1", true);
         testEntityManager.merge(orgForm);
         orgFormRepository.deleteById(orgForm.getId());

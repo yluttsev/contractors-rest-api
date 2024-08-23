@@ -2,12 +2,12 @@ package ru.luttsev.contractors.exception;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.luttsev.contractors.service.contractor.ContractorService;
 import ru.luttsev.contractors.service.country.CountryService;
 import ru.luttsev.contractors.service.industry.IndustryService;
-import ru.luttsev.contractors.service.jwt.JwtService;
 import ru.luttsev.contractors.service.orgform.OrgFormService;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -15,23 +15,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ExceptionTests {
 
-    @MockBean
+    @Mock
     private OrgFormService orgFormService;
 
-    @MockBean
+    @Mock
     private IndustryService industryService;
 
-    @MockBean
+    @Mock
     private CountryService countryService;
 
-    @MockBean
+    @Mock
     private ContractorService contractorService;
-
-    @MockBean
-    private JwtService jwtService;
 
     @Test
     @DisplayName("Выбрасывание исключения OrgFormNotFoundException")

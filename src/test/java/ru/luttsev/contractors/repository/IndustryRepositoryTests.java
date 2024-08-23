@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
+import ru.luttsev.contractors.PostgresContainer;
 import ru.luttsev.contractors.entity.Industry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,8 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
+@Import(PostgresContainer.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class IndustryRepositoryTests {
+class IndustryRepositoryTests {
 
     @Autowired
     private IndustryRepository industryRepository;
@@ -24,15 +27,15 @@ public class IndustryRepositoryTests {
 
     @Test
     @DisplayName("Поиск объекта Industry по ID")
-    public void testFindIndustryById() {
-        Industry industry = new Industry(1 , "Industry 1", true);
+    void testFindIndustryById() {
+        Industry industry = new Industry(1, "Industry 1", true);
         testEntityManager.merge(industry);
         assertTrue(industryRepository.findById(industry.getId()).isPresent());
     }
 
     @Test
     @DisplayName("Сохранение объекта Industry")
-    public void testSaveIndustry() {
+    void testSaveIndustry() {
         Industry industry = new Industry(1, "Industry 1", true);
         Industry savedIndustry = industryRepository.save(industry);
         assertEquals(testEntityManager.find(Industry.class, industry.getId()), savedIndustry);
@@ -40,7 +43,7 @@ public class IndustryRepositoryTests {
 
     @Test
     @DisplayName("Обновление объекта Industry")
-    public void testUpdateIndustry() {
+    void testUpdateIndustry() {
         Industry industry = new Industry(1, "Industry 1", true);
         testEntityManager.merge(industry);
         industry.setName("Industry 2");
@@ -50,7 +53,7 @@ public class IndustryRepositoryTests {
 
     @Test
     @DisplayName("Удаление объекта Industry по ID")
-    public void testDeleteIndustryById() {
+    void testDeleteIndustryById() {
         Industry industry = new Industry(1, "Industry 1", true);
         testEntityManager.merge(industry);
         industryRepository.deleteById(industry.getId());

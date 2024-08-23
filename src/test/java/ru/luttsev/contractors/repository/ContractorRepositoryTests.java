@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
+import ru.luttsev.contractors.PostgresContainer;
 import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.entity.Industry;
@@ -16,8 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
+@Import(PostgresContainer.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ContractorRepositoryTests {
+class ContractorRepositoryTests {
 
     @Autowired
     private ContractorRepository contractorRepository;
@@ -37,7 +40,7 @@ public class ContractorRepositoryTests {
 
     @Test
     @DisplayName("Поиск объекта Contractor по ID")
-    public void testFindContractorById() {
+    void testFindContractorById() {
         Contractor contractor = createContractor();
         testEntityManager.merge(contractor);
         assertTrue(contractorRepository.findById(contractor.getId()).isPresent());
@@ -45,7 +48,7 @@ public class ContractorRepositoryTests {
 
     @Test
     @DisplayName("Сохранение объекта Contractor")
-    public void testSaveIndustry() {
+    void testSaveIndustry() {
         Contractor contractor = createContractor();
         Contractor savedContractor = contractorRepository.save(contractor);
         assertEquals(testEntityManager.find(Contractor.class, contractor.getId()), savedContractor);
@@ -53,7 +56,7 @@ public class ContractorRepositoryTests {
 
     @Test
     @DisplayName("Обновление объекта Contractor")
-    public void testUpdateContractor() {
+    void testUpdateContractor() {
         Contractor contractor = createContractor();
         testEntityManager.merge(contractor);
         contractor.setName("Contractor 2");
@@ -63,7 +66,7 @@ public class ContractorRepositoryTests {
 
     @Test
     @DisplayName("Удаление объекта Contractor по ID")
-    public void testDeleteContractorById() {
+    void testDeleteContractorById() {
         Contractor contractor = createContractor();
         testEntityManager.merge(contractor);
         contractorRepository.deleteById(contractor.getId());

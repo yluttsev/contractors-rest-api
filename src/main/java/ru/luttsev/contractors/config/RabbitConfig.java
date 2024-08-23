@@ -83,4 +83,9 @@ public class RabbitConfig {
                 .withQueueName();
     }
 
+    @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
+    }
+
 }
