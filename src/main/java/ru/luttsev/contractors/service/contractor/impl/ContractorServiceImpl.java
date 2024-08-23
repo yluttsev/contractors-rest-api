@@ -1,8 +1,11 @@
 package ru.luttsev.contractors.service.contractor.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.exception.ContractorNotFoundException;
 import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
+import ru.luttsev.contractors.payload.contractor.ContractorRabbitMessage;
+import ru.luttsev.contractors.payload.contractor.ContractorRabbitPayload;
 import ru.luttsev.contractors.payload.contractor.ContractorResponsePayload;
 import ru.luttsev.contractors.payload.contractor.ContractorSpecification;
 import ru.luttsev.contractors.payload.contractor.ContractorsPagePayload;
@@ -34,9 +39,13 @@ public class ContractorServiceImpl implements ContractorService {
 
     private final ContractorRepository contractorRepository;
 
+    private final RabbitTemplate rabbitTemplate;
+
     private final ContractorJdbcRepository contractorJdbcRepository;
 
     private final SecurityService securityService;
+
+    private final ObjectMapper objectMapper;
 
     private final ModelMapper mapper;
 
@@ -71,9 +80,20 @@ public class ContractorServiceImpl implements ContractorService {
      */
     @Override
     @Transactional
+    @SneakyThrows
     @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public Contractor saveOrUpdate(Contractor contractor) {
-        return contractorRepository.save(contractor);
+        Contractor savedContractor = contractorRepository.save(contractor);
+        rabbitTemplate.convertAndSend("contractors_contractor_exchange",
+                "deals_contractor_queue",
+                objectMapper.writeValueAsString(
+                        new ContractorRabbitMessage(ContractorRabbitPayload.builder()
+                                .contractorId(savedContractor.getId())
+                                .inn(savedContractor.getInn())
+                                .name(savedContractor.getName())
+                                .build())
+                ));
+        return savedContractor;
     }
 
     /**
