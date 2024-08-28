@@ -171,8 +171,8 @@ public class OrgFormController {
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
-    public ResponseEntity<?> deleteById(@Parameter(description = "ID формы организации", required = true)
-                                        @PathVariable("id") Integer orgFormId) {
+    public ResponseEntity<Void> deleteById(@Parameter(description = "ID формы организации", required = true)
+                                           @PathVariable("id") Integer orgFormId) {
         orgFormService.deleteById(orgFormId);
         return ResponseEntity.ok().build();
     }

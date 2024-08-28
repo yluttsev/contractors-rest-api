@@ -2,7 +2,6 @@ package ru.luttsev.contractors.service.orgform.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.OrgForm;
 import ru.luttsev.contractors.exception.OrgFormNotFoundException;
@@ -13,17 +12,18 @@ import java.util.List;
 
 /**
  * Сервис для работы с объектами форм организаций
+ *
  * @author Yuri Luttsev
  */
 @Service
 @RequiredArgsConstructor
-@PreAuthorize("!hasRole('ADMIN')")
 public class OrgFormServiceImpl implements OrgFormService {
 
     private final OrgFormRepository orgFormRepository;
 
     /**
      * Получение всех объектов форм организиций
+     *
      * @return {@link OrgForm сущность формы организации}
      */
     @Override
@@ -33,6 +33,7 @@ public class OrgFormServiceImpl implements OrgFormService {
 
     /**
      * Получение объекта формы организации по ID
+     *
      * @param id ID объекта формы организации
      * @return {@link OrgForm сущность формы организации}
      */
@@ -45,23 +46,23 @@ public class OrgFormServiceImpl implements OrgFormService {
 
     /**
      * Сохранение или обновление объекта формы организации
+     *
      * @param orgForm {@link OrgForm сущность объекта формы организации}
      * @return сохраненный или обновленный {@link OrgForm объект формы организации}
      */
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public OrgForm saveOrUpdate(OrgForm orgForm) {
         return orgFormRepository.save(orgForm);
     }
 
     /**
      * Удаление объекта формы организации по ID
+     *
      * @param id ID объекта формы организации
      */
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public void deleteById(Integer id) {
         if (orgFormRepository.existsById(id)) {
             orgFormRepository.deleteById(id);

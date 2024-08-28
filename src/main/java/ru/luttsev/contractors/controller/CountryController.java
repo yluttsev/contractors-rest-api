@@ -31,7 +31,6 @@ import ru.luttsev.springbootstarterauditlib.LogLevel;
 import ru.luttsev.springbootstarterauditlib.annotation.WebAuditLog;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Контроллер для работы со странами
@@ -75,7 +74,7 @@ public class CountryController {
     public List<CountryResponsePayload> getAllCountries() {
         return countryService.getAll().stream()
                 .map(country -> mapper.map(country, CountryResponsePayload.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -173,8 +172,8 @@ public class CountryController {
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
-    public ResponseEntity<?> deleteCountry(@Parameter(description = "ID страны")
-                                           @PathVariable("id") String countryId) {
+    public ResponseEntity<Void> deleteCountry(@Parameter(description = "ID страны")
+                                              @PathVariable("id") String countryId) {
         countryService.deleteById(countryId);
         return ResponseEntity.ok().build();
     }

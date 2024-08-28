@@ -173,7 +173,7 @@ public class IndustryController {
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
-    public ResponseEntity<?> deleteCountry(@Parameter(description = "ID промышленности", required = true)
+    public ResponseEntity<Void> deleteCountry(@Parameter(description = "ID промышленности", required = true)
                                            @PathVariable("id") Integer industryId) {
         industryService.deleteById(industryId);
         return ResponseEntity.ok().build();

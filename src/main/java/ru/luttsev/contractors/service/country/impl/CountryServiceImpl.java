@@ -2,7 +2,6 @@ package ru.luttsev.contractors.service.country.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.luttsev.contractors.entity.Country;
 import ru.luttsev.contractors.exception.CountryNotFoundException;
@@ -13,17 +12,18 @@ import java.util.List;
 
 /**
  * Сервис для работы со странами
+ *
  * @author Yuri Luttsev
  */
 @Service
 @RequiredArgsConstructor
-@PreAuthorize("!hasRole('ADMIN')")
 public class CountryServiceImpl implements CountryService {
 
     private final CountryRepository countryRepository;
 
     /**
      * Получение всех стран
+     *
      * @return список {@link Country сущностей стран}
      */
     @Override
@@ -33,6 +33,7 @@ public class CountryServiceImpl implements CountryService {
 
     /**
      * Получение страны по ID
+     *
      * @param id ID страны
      * @return {@link Country сущность страны}
      */
@@ -45,23 +46,23 @@ public class CountryServiceImpl implements CountryService {
 
     /**
      * Сохранение или обновление страны
+     *
      * @param country {@link Country сущность страны}
      * @return сохраненная или обновленная {@link Country страна}
      */
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public Country saveOrUpdate(Country country) {
         return countryRepository.save(country);
     }
 
     /**
      * Удаление страны по ID
+     *
      * @param id ID страны
      */
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public void deleteById(String id) {
         if (countryRepository.existsById(id)) {
             countryRepository.deleteById(id);

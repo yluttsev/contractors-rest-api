@@ -5,13 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import ru.luttsev.contractors.PostgresContainer;
 import ru.luttsev.contractors.entity.Contractor;
 import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
 import ru.luttsev.contractors.repository.jdbc.ContractorJdbcRepository;
@@ -21,30 +18,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@Testcontainers
+@Import(PostgresContainer.class)
 @Transactional
-public class ContractorJdbcRepositoryTests {
-
-    @Container
-    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("contractors")
-            .withUsername("postgres")
-            .withPassword("postgres");
+class ContractorJdbcRepositoryTests {
 
     @Autowired
     private ContractorJdbcRepository contractorJdbcRepository;
 
-    @DynamicPropertySource
-    public static void setTestProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-    }
-
     @Test
     @Sql("/sql/contractors_test.sql")
     @DisplayName("Поиск объекта Contractor по фильтрам")
-    public void testFindContractorByFilters() {
+    void testFindContractorByFilters() {
         ContractorFiltersPayload filters = ContractorFiltersPayload.builder()
                 .name("Contractor 1")
                 .countryName("Российская Федерация")

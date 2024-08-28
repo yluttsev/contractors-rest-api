@@ -13,12 +13,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,7 +32,6 @@ import ru.luttsev.contractors.payload.contractor.ContractorFiltersPayload;
 import ru.luttsev.contractors.payload.contractor.ContractorResponsePayload;
 import ru.luttsev.contractors.payload.contractor.ContractorsPagePayload;
 import ru.luttsev.contractors.payload.contractor.SaveOrUpdateContractorPayload;
-import ru.luttsev.contractors.payload.contractor.SetMainBorrowerPayload;
 import ru.luttsev.contractors.service.contractor.ContractorService;
 import ru.luttsev.springbootstarterauditlib.LogLevel;
 import ru.luttsev.springbootstarterauditlib.annotation.WebAuditLog;
@@ -46,6 +45,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/contractor")
 @RequiredArgsConstructor
+@PreAuthorize("!hasRole('ADMIN')")
 public class ContractorController {
 
     private final ContractorService contractorService;
@@ -74,6 +74,7 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/all")
+    @PreAuthorize("hasRole('USER')")
     public List<ContractorResponsePayload> getAllContractors() {
         return contractorService.getAll().stream()
                 .map(contractor -> mapper.map(contractor, ContractorResponsePayload.class))
@@ -111,6 +112,7 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ContractorResponsePayload getContractorById(@Parameter(description = "ID контрагента", required = true)
                                                        @PathVariable("id") String contractorId) {
         return mapper.map(contractorService.getById(contractorId), ContractorResponsePayload.class);
@@ -138,6 +140,7 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PutMapping("/save")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ContractorResponsePayload saveOrUpdateContractor(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Контрактор для сохранения", required = true)
             @RequestBody SaveOrUpdateContractorPayload contractorPayload) {
@@ -170,6 +173,7 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<Void> deleteContractorById(@Parameter(description = "ID контрагента", required = true)
                                                      @PathVariable("id") String contractorId) {
         contractorService.deleteById(contractorId);
@@ -196,6 +200,7 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PostMapping("/search")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER', 'CONTRACTOR_RUS')")
     public ContractorsPagePayload searchContractors(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Фильтры поиска контрагентов", required = true)
             @RequestBody ContractorFiltersPayload contractorFilters,
@@ -225,6 +230,7 @@ public class ContractorController {
     })
     @WebAuditLog(logLevel = LogLevel.INFO)
     @PostMapping("/jdbc/search")
+    @PreAuthorize("hasAnyRole('CONTRACTOR_SUPERUSER', 'SUPERUSER', 'CONTRACTOR_RUS')")
     public ContractorsPagePayload searchContractorsJdbc(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Фильтры поиска контрагентов", required = true)
             @RequestBody ContractorFiltersPayload contractorFilters,
@@ -232,12 +238,6 @@ public class ContractorController {
             @Parameter(description = "Количество элементов на странице", required = true) @RequestParam(defaultValue = "10") int contentSize,
             @AuthenticationPrincipal UserDetails userDetails) {
         return contractorService.getByFiltersJdbcWithCheckRole(contractorFilters, page, contentSize, userDetails);
-    }
-
-    @PatchMapping("/main-borrower")
-    public ContractorResponsePayload setMainBorrower(@RequestBody SetMainBorrowerPayload payload) {
-        Contractor contractor = contractorService.setMainBorrower(payload.getContractorId(), payload.isMainBorrower());
-        return mapper.map(contractor, ContractorResponsePayload.class);
     }
 
     /**
